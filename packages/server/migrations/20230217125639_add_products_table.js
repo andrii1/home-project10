@@ -28,6 +28,7 @@ exports.up = function (knex) {
     table.integer('discount_percentage').unsigned().nullable();
 
     table.boolean('is_prime').defaultTo(false);
+    table.boolean('trending').defaultTo(false);
 
     table.integer('bought_last_month').unsigned().nullable();
     table.integer('rank').unsigned().nullable(); // Movers & Shakers / Best Sellers rank
