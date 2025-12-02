@@ -6,13 +6,14 @@ exports.up = function (knex) {
   return knex.schema
     .createTable('features', (table) => {
       table.increments();
+      table.string('slug').notNullable();
       table.string('title').notNullable();
       table.text('meta_description').nullable();
     })
-    .createTable('featuresApps', (table) => {
+    .createTable('featuresProducts', (table) => {
       table.increments();
-      table.integer('app_id').unsigned();
-      table.foreign('app_id').references('id').inTable('apps');
+      table.integer('product_id').unsigned();
+      table.foreign('product_id').references('id').inTable('products');
       table.integer('feature_id').unsigned();
       table.foreign('feature_id').references('id').inTable('features');
     });
@@ -23,5 +24,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.dropTable('featuresApps').dropTable('features');
+  return knex.schema.dropTable('featuresProducts').dropTable('features');
 };

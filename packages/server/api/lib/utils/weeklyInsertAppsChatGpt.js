@@ -96,7 +96,7 @@ async function fetchAppByAppleId(appleId) {
 
 async function createWebsiteDataWithChatGpt(url) {
   // Generate a short description using OpenAI
-  const prompt = `Select a category for this website: ${url}. You need to select one category from this list: "Books, Business, Catalogs, Education, Entertainment, Finance, Food and Drink, Games, Health and Fitness, Lifestyle, Medical, Music, Navigation, News, Photo and Video, Productivity, Reference, Shopping, Social Networking, Sports, Travel, Utilities, Weather". Return only category name, without any additional text, e.g. "Education."`;
+  const prompt = `Select a category for this website: ${url}. You need to select one category from this list: "Books, Business, Catalogs, Education, Entertainment, Finance, Food and Drink, Games, Health and Fitness, Lifestyle, Medical, Music, Navigation, News, Photo and Video, Productivity, Reference, Shopping, Social Networking, Sports, Travel, Utilities, Weather". Return only category name, without any additional text, e.g. "Education"`;
 
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
