@@ -7,7 +7,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import './Apps.Style.css';
+import './Products.Style.css';
 import { apiURL } from '../../apiURL';
 import { Card } from '../../components/Card/Card.component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -43,7 +43,7 @@ import MultiSelectDropdown from '../../components/MultiSelectDropdown/MultiSelec
 
 const tabs = ['Categories', 'Tags', 'Searches'];
 
-export const Apps = () => {
+export const Products = () => {
   const { user } = useUserContext();
   const location = useLocation();
   // const { searchParam } = useParams();
@@ -78,7 +78,7 @@ export const Apps = () => {
   const [listView, setListView] = useState(false);
   const [page, setPage] = useState(0);
   const [counter, setCounter] = useState(0);
-  const [apps, setApps] = useState({});
+  const [products, setApps] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [orderBy, setOrderBy] = useState({
@@ -100,8 +100,8 @@ export const Apps = () => {
   };
 
   const parseFiltersFromPath = useCallback(() => {
-    // Remove "/apps/" from the start
-    const path = location.pathname.replace(/^\/apps\/?/, '');
+    // Remove "/products/" from the start
+    const path = location.pathname.replace(/^\/products\/?/, '');
     const parts = path.split('/');
 
     const filters = {};
@@ -205,7 +205,7 @@ export const Apps = () => {
       params.append('search', filteredSearch.join(','));
     }
 
-    const url = `${apiURL()}/apps?${params.toString()}`;
+    const url = `${apiURL()}/products?${params.toString()}`;
 
     async function fetchData() {
       const response = await fetch(url);
@@ -322,7 +322,7 @@ export const Apps = () => {
       params.append('search', filteredSearch.join(','));
     }
 
-    const url = `${apiURL()}/apps?${params.toString()}`;
+    const url = `${apiURL()}/products?${params.toString()}`;
 
     const response = await fetch(url);
     const json = await response.json();
@@ -348,7 +348,7 @@ export const Apps = () => {
 
   // useEffect(() => {
   //   async function fetchAppsSearch() {
-  //     const responseApps = await fetch(`${apiURL()}/apps/`);
+  //     const responseApps = await fetch(`${apiURL()}/products/`);
 
   //     const responseAppsJson = await responseApps.json();
 
@@ -466,7 +466,7 @@ export const Apps = () => {
         parts.push(`${key}/${values.join(',')}`);
       }
     });
-    navigate(`/apps/${parts.join('/')}`, { replace: true });
+    navigate(`/products/${parts.join('/')}`, { replace: true });
   };
 
   const filterHandler = (type, id) => {
@@ -499,7 +499,7 @@ export const Apps = () => {
   //     params.delete(type);
   //   }
 
-  //   navigate(`/apps?${params.toString()}`, { replace: true });
+  //   navigate(`/products?${params.toString()}`, { replace: true });
   // };
 
   // const filterHandler = (type, id) => {
@@ -591,7 +591,7 @@ export const Apps = () => {
   //     }
   //   });
 
-  //   navigate(`/apps?${params.toString()}`, { replace: true });
+  //   navigate(`/products?${params.toString()}`, { replace: true });
   // };
 
   const clearFiltersHandler = () => {
@@ -612,7 +612,7 @@ export const Apps = () => {
     // Reset the URL (remove all query params)
     navigate('/', { replace: true });
 
-    // ✅ Optional: also reset pagination/apps if needed
+    // ✅ Optional: also reset pagination/products if needed
     // setPage(0);
     // setApps({ data: [], lastItem: null, hasMore: true });
   };
@@ -790,7 +790,7 @@ export const Apps = () => {
     fetchFavorites();
   }, [fetchFavorites]);
 
-  const addFavorite = async (appId) => {
+  const addFavorite = async (productId) => {
     const response = await fetch(`${apiURL()}/favorites`, {
       method: 'POST',
       headers: {
@@ -798,7 +798,7 @@ export const Apps = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        app_id: appId,
+        product_id: productId,
       }),
     });
     if (response.ok) {
@@ -949,7 +949,7 @@ export const Apps = () => {
         <meta name="description" content={pageMetaDescription} />
       </Helmet>
       {/* <div className="hero"></div> */}
-      <div className="hero apps">
+      <div className="hero products">
         <h1 className="hero-header">{pageHeaderTitle}</h1>
       </div>
       <div className="tabs-group">{tabsGroup}</div>
@@ -1190,36 +1190,36 @@ export const Apps = () => {
           X
         </Button>
       </section>
-      {apps.data ? (
+      {products.data ? (
         <section className="container-scroll">
           <InfiniteScroll
-            dataLength={apps.data.length}
+            dataLength={products.data.length}
             next={fetchApps}
-            hasMore={apps.hasMore} // Replace with a condition based on your data source
+            hasMore={products.hasMore} // Replace with a condition based on your data source
             loader={<p>Loading...</p>}
             endMessage={<p>No more data to load.</p>}
             className={`container-cards ${listView ? 'list' : 'grid'}`}
           >
-            {apps.data.map((app) => {
+            {products.data.map((product) => {
               return (
                 <Card
                   listCard={listView}
-                  id={app.id}
-                  title={app.title}
-                  description={app.description}
-                  url={app.url}
-                  urlImage={app.url_icon || globe}
-                  topic={app.categoryTitle}
-                  topicId={app.categorySlug}
-                  pricingType={app.pricing_type}
-                  isFavorite={favorites.some((x) => x.id === app.id)}
-                  addFavorite={(event) => addFavorite(app.id)}
-                  deleteBookmark={() => handleDeleteBookmarks(app.id)}
+                  id={product.id}
+                  title={product.title}
+                  description={product.description}
+                  url={product.url}
+                  urlImage={product.url_icon || globe}
+                  topic={product.categoryTitle}
+                  topicId={product.categorySlug}
+                  pricingType={product.pricing_type}
+                  isFavorite={favorites.some((x) => x.id === product.id)}
+                  addFavorite={(event) => addFavorite(product.id)}
+                  deleteBookmark={() => handleDeleteBookmarks(product.id)}
                   bookmarkOnClick={() => {
                     setOpenModal(true);
                     setModalTitle('Sign up to add bookmarks');
                   }}
-                  cardUrl={`/apps/${app.slug}`}
+                  cardUrl={`/products/${product.slug}`}
                 />
               );
             })}

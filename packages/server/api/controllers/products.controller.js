@@ -7,7 +7,7 @@ Can be deleted as soon as the first real controller is added. */
 const generateSlug = require('../lib/utils/generateSlug');
 const capitalize = require('../lib/utils/capitalize');
 const { normalizeUrl } = require('../lib/utils/normalizeUrl');
-const { getAppleId } = require('../lib/utils/getAppleIdByUrl');
+const { getProductleId } = require('../lib/utils/getProductleIdByUrl');
 const knex = require('../../config/db');
 const HttpError = require('../lib/utils/http-error');
 const OpenAI = require('openai');
@@ -154,28 +154,28 @@ async function withTimeout(promise, ms = 15000) {
   ]);
 }
 
-const getAppsAll = async () => {
+const getProductsAll = async () => {
   try {
-    const apps = knex('apps')
-      .select('apps.*', 'categories.title as categoryTitle')
-      .join('categories', 'apps.category_id', '=', 'categories.id');
-    return apps;
+    const products = knex('products')
+      .select('products.*', 'categories.title as categoryTitle')
+      .join('categories', 'products.category_id', '=', 'categories.id');
+    return products;
   } catch (error) {
     return error.message;
   }
 };
 
-const getApps = async (page, column, direction) => {
+const getProducts = async (page, column, direction) => {
   const lastItemDirection = getOppositeOrderDirection(direction);
   try {
     const getModel = () =>
-      knex('apps')
+      knex('products')
         .select(
-          'apps.*',
+          'products.*',
           'categories.title as categoryTitle',
           'categories.slug as categorySlug',
         )
-        .join('categories', 'apps.category_id', '=', 'categories.id');
+        .join('categories', 'products.category_id', '=', 'categories.id');
     const lastItem = await getModel()
       .orderBy(column, lastItemDirection)
       .limit(1);
@@ -193,20 +193,20 @@ const getApps = async (page, column, direction) => {
   }
 };
 
-const getAppsPagination = async (column, direction, page, size) => {
+const getProductsPagination = async (column, direction, page, size) => {
   try {
     const getModel = () =>
-      knex('apps')
+      knex('products')
         .select(
-          'apps.*',
+          'products.*',
           'categories.title as categoryTitle',
           'categories.slug as categorySlug',
         )
-        .join('categories', 'apps.category_id', '=', 'categories.id')
+        .join('categories', 'products.category_id', '=', 'categories.id')
         .orderBy(column, direction);
     const totalCount = await getModel()
-      .count('apps.id', { as: 'rows' })
-      .groupBy('apps.id');
+      .count('products.id', { as: 'rows' })
+      .groupBy('products.id');
     const data = await getModel()
       .offset(page * size)
       .limit(size)
@@ -223,17 +223,17 @@ const getAppsPagination = async (column, direction, page, size) => {
   }
 };
 
-const getAppsSearch = async (search, column, direction, page, size) => {
+const getProductsSearch = async (search, column, direction, page, size) => {
   try {
     const getModel = () =>
-      knex('apps')
-        .select('apps.*', 'categories.title as categoryTitle')
-        .join('categories', 'apps.category_id', '=', 'categories.id')
+      knex('products')
+        .select('products.*', 'categories.title as categoryTitle')
+        .join('categories', 'products.category_id', '=', 'categories.id')
         .orderBy(column, direction)
-        .where('apps.title', 'like', `%${search}%`);
+        .where('products.title', 'like', `%${search}%`);
     const totalCount = await getModel()
-      .count('apps.id', { as: 'rows' })
-      .groupBy('apps.id');
+      .count('products.id', { as: 'rows' })
+      .groupBy('products.id');
     const data = await getModel()
       .offset(page * size)
       .limit(size)
@@ -250,28 +250,28 @@ const getAppsSearch = async (search, column, direction, page, size) => {
   }
 };
 
-const getAppsByCategories = async (categories) => {
+const getProductsByCategories = async (categories) => {
   try {
-    const apps = await knex('apps')
-      .select('apps.*', 'categories.title as categoryTitle')
-      .join('categories', 'apps.category_id', '=', 'categories.id')
+    const products = await knex('products')
+      .select('products.*', 'categories.title as categoryTitle')
+      .join('categories', 'products.category_id', '=', 'categories.id')
       .whereIn('category_id', categories);
 
-    return apps;
+    return products;
   } catch (error) {
     return error.message;
   }
 };
 
-const getAppsByCategory = async (category, page, column, direction) => {
+const getProductsByCategory = async (category, page, column, direction) => {
   const lastItemDirection = getOppositeOrderDirection(direction);
   try {
     const getModel = () =>
-      knex('apps')
-        .select('apps.*', 'categories.title as categoryTitle')
-        .join('categories', 'apps.category_id', '=', 'categories.id')
+      knex('products')
+        .select('products.*', 'categories.title as categoryTitle')
+        .join('categories', 'products.category_id', '=', 'categories.id')
         .where({
-          'apps.category_id': category,
+          'products.category_id': category,
         });
 
     const lastItem = await getModel()
@@ -291,21 +291,21 @@ const getAppsByCategory = async (category, page, column, direction) => {
   }
 };
 
-const getAppsByTag = async (page, column, direction, tag) => {
+const getProductsByTag = async (page, column, direction, tag) => {
   const lastItemDirection = getOppositeOrderDirection(direction);
   try {
     const getModel = () =>
-      knex('apps')
+      knex('products')
         .select(
-          'apps.*',
+          'products.*',
           'categories.title as categoryTitle',
           'tags.id as tagId',
           'tags.slug as tagSlug',
           'tags.title as tagTitle',
         )
-        .join('categories', 'apps.category_id', '=', 'categories.id')
-        .join('tagsApps', 'tagsApps.app_id', '=', 'apps.id')
-        .join('tags', 'tags.id', '=', 'tagsApps.tag_id')
+        .join('categories', 'products.category_id', '=', 'categories.id')
+        .join('tagsProducts', 'tagsProducts.app_id', '=', 'products.id')
+        .join('tags', 'tags.id', '=', 'tagsProducts.tag_id')
         .where('tags.slug', '=', `${tag}`);
     const lastItem = await getModel()
       .orderBy(column, lastItemDirection)
@@ -325,34 +325,35 @@ const getAppsByTag = async (page, column, direction, tag) => {
 };
 
 const pricingFiltersMap = {
-  free: (qb) => qb.orWhere('apps.pricing_free', true),
-  freemium: (qb) => qb.orWhere('apps.pricing_freemium', true),
-  'ios-paid': (qb) => qb.orWhere('apps.pricing_ios_app_paid', true),
-  'ios-free': (qb) => qb.orWhere('apps.pricing_ios_app_free', true),
-  subscription: (qb) => qb.orWhere('apps.pricing_subscription', true),
-  'one-time': (qb) => qb.orWhere('apps.pricing_one_time', true),
-  trial: (qb) => qb.orWhere('apps.pricing_trial_available', true),
+  free: (qb) => qb.orWhere('products.pricing_free', true),
+  freemium: (qb) => qb.orWhere('products.pricing_freemium', true),
+  'ios-paid': (qb) => qb.orWhere('products.pricing_ios_app_paid', true),
+  'ios-free': (qb) => qb.orWhere('products.pricing_ios_app_free', true),
+  subscription: (qb) => qb.orWhere('products.pricing_subscription', true),
+  'one-time': (qb) => qb.orWhere('products.pricing_one_time', true),
+  trial: (qb) => qb.orWhere('products.pricing_trial_available', true),
 };
 
 const platformsFiltersMap = {
-  'browser-extension': (qb) => qb.orWhereNotNull('apps.url_chrome_extension'),
-  ios: (qb) => qb.orWhereNotNull('apps.apple_id'),
-  android: (qb) => qb.orWhereNotNull('apps.url_google_play_store'),
-  windows: (qb) => qb.orWhereNotNull('apps.url_windows'),
-  mac: (qb) => qb.orWhereNotNull('apps.url_mac'),
+  'browser-extension': (qb) =>
+    qb.orWhereNotNull('products.url_chrome_extension'),
+  ios: (qb) => qb.orWhereNotNull('products.apple_id'),
+  android: (qb) => qb.orWhereNotNull('products.url_google_play_store'),
+  windows: (qb) => qb.orWhereNotNull('products.url_windows'),
+  mac: (qb) => qb.orWhereNotNull('products.url_mac'),
 };
 
 const socialMediaFiltersMap = {
-  twitter: (qb) => qb.orWhereNotNull('apps.url_x'),
-  discord: (qb) => qb.orWhereNotNull('apps.url_discord'),
+  twitter: (qb) => qb.orWhereNotNull('products.url_x'),
+  discord: (qb) => qb.orWhereNotNull('products.url_discord'),
 };
 
 const otherFiltersMap = {
-  'open-source': (qb) => qb.orWhere('apps.is_open_source', true),
-  ai: (qb) => qb.orWhere('apps.is_ai_powered', true),
+  'open-source': (qb) => qb.orWhere('products.is_open_source', true),
+  ai: (qb) => qb.orWhere('products.is_ai_powered', true),
 };
 
-const getAppsBy = async ({
+const getProductsBy = async ({
   page,
   column,
   direction,
@@ -372,13 +373,13 @@ const getAppsBy = async ({
   const lastItemDirection = getOppositeOrderDirection(direction);
   try {
     const getModel = () =>
-      knex('apps')
+      knex('products')
         .select(
-          'apps.*',
+          'products.*',
           'categories.title as categoryTitle',
           'categories.slug as categorySlug',
         )
-        .join('categories', 'apps.category_id', '=', 'categories.id')
+        .join('categories', 'products.category_id', '=', 'categories.id')
         .modify((queryBuilder) => {
           if (categories !== undefined) {
             const categoriesArray = categories.split(',');
@@ -428,8 +429,8 @@ const getAppsBy = async ({
             const searchArray = search.split(',');
             queryBuilder.where(function () {
               searchArray.forEach((term) => {
-                this.orWhere('apps.title', 'like', `%${term}%`).orWhere(
-                  'apps.description',
+                this.orWhere('products.title', 'like', `%${term}%`).orWhere(
+                  'products.description',
                   'like',
                   `%${term}%`,
                 );
@@ -439,50 +440,54 @@ const getAppsBy = async ({
 
           // if (tags !== undefined) {
           //   const tagsArray = tags.split(',');
-          //   queryBuilder.whereIn('apps.id', function () {
+          //   queryBuilder.whereIn('products.id', function () {
           //     this.select('app_id')
-          //       .from('tagsApps')
+          //       .from('tagsProducts')
           //       .whereIn('tag_id', tagsArray);
           //   });
           // }
           if (tags !== undefined) {
             const tagsArray = tags.split(',');
-            queryBuilder.whereIn('apps.id', function () {
-              this.select('tagsApps.app_id')
-                .from('tagsApps')
-                .join('tags', 'tagsApps.tag_id', 'tags.id')
+            queryBuilder.whereIn('products.id', function () {
+              this.select('tagsProducts.app_id')
+                .from('tagsProducts')
+                .join('tags', 'tagsProducts.tag_id', 'tags.id')
                 .whereIn('tags.slug', tagsArray);
             });
           }
 
           if (features !== undefined) {
             const featuresArray = features.split(',');
-            queryBuilder.whereIn('apps.id', function () {
-              this.select('featuresApps.app_id')
-                .from('featuresApps')
-                .join('features', 'featuresApps.feature_id', 'features.id')
+            queryBuilder.whereIn('products.id', function () {
+              this.select('featuresProducts.app_id')
+                .from('featuresProducts')
+                .join('features', 'featuresProducts.feature_id', 'features.id')
                 .whereIn('features.slug', featuresArray);
             });
           }
 
           if (userTypes !== undefined) {
             const userTypesArray = userTypes.split(',');
-            queryBuilder.whereIn('apps.id', function () {
-              this.select('userTypesApps.app_id')
-                .from('userTypesApps')
-                .join('userTypes', 'userTypesApps.userType_id', 'userTypes.id')
+            queryBuilder.whereIn('products.id', function () {
+              this.select('userTypesProducts.app_id')
+                .from('userTypesProducts')
+                .join(
+                  'userTypes',
+                  'userTypesProducts.userType_id',
+                  'userTypes.id',
+                )
                 .whereIn('userTypes.slug', userTypesArray);
             });
           }
 
           if (businessModels !== undefined) {
             const businessModelsArray = businessModels.split(',');
-            queryBuilder.whereIn('apps.id', function () {
-              this.select('businessModelsApps.app_id')
-                .from('businessModelsApps')
+            queryBuilder.whereIn('products.id', function () {
+              this.select('businessModelsProducts.app_id')
+                .from('businessModelsProducts')
                 .join(
                   'businessModels',
-                  'businessModelsApps.businessModel_id',
+                  'businessModelsProducts.businessModel_id',
                   'businessModels.id',
                 )
                 .whereIn('businessModels.slug', businessModelsArray);
@@ -491,22 +496,22 @@ const getAppsBy = async ({
 
           if (useCases !== undefined) {
             const useCasesArray = useCases.split(',');
-            queryBuilder.whereIn('apps.id', function () {
-              this.select('useCasesApps.app_id')
-                .from('useCasesApps')
-                .join('useCases', 'useCasesApps.useCase_id', 'useCases.id')
+            queryBuilder.whereIn('products.id', function () {
+              this.select('useCasesProducts.app_id')
+                .from('useCasesProducts')
+                .join('useCases', 'useCasesProducts.useCase_id', 'useCases.id')
                 .whereIn('useCases.slug', useCasesArray);
             });
           }
 
           if (industries !== undefined) {
             const industriesArray = industries.split(',');
-            queryBuilder.whereIn('apps.id', function () {
-              this.select('industriesApps.app_id')
-                .from('industriesApps')
+            queryBuilder.whereIn('products.id', function () {
+              this.select('industriesProducts.app_id')
+                .from('industriesProducts')
                 .join(
                   'industries',
-                  'industriesApps.industry_id',
+                  'industriesProducts.industry_id',
                   'industries.id',
                 )
                 .whereIn('industries.slug', industriesArray);
@@ -515,41 +520,41 @@ const getAppsBy = async ({
 
           // if (features !== undefined) {
           //   const featuresArray = features.split(',');
-          //   queryBuilder.whereIn('apps.id', function () {
+          //   queryBuilder.whereIn('products.id', function () {
           //     this.select('app_id')
-          //       .from('featuresApps')
+          //       .from('featuresProducts')
           //       .whereIn('feature_id', featuresArray);
           //   });
           // }
           // if (userTypes !== undefined) {
           //   const userTypesArray = userTypes.split(',');
-          //   queryBuilder.whereIn('apps.id', function () {
+          //   queryBuilder.whereIn('products.id', function () {
           //     this.select('app_id')
-          //       .from('userTypesApps')
+          //       .from('userTypesProducts')
           //       .whereIn('userType_id', userTypesArray);
           //   });
           // }
           // if (businessModels !== undefined) {
           //   const businessModelsArray = businessModels.split(',');
-          //   queryBuilder.whereIn('apps.id', function () {
+          //   queryBuilder.whereIn('products.id', function () {
           //     this.select('app_id')
-          //       .from('businessModelsApps')
+          //       .from('businessModelsProducts')
           //       .whereIn('businessModel_id', businessModelsArray);
           //   });
           // }
           // if (useCases !== undefined) {
           //   const useCasesArray = useCases.split(',');
-          //   queryBuilder.whereIn('apps.id', function () {
+          //   queryBuilder.whereIn('products.id', function () {
           //     this.select('app_id')
-          //       .from('useCasesApps')
+          //       .from('useCasesProducts')
           //       .whereIn('useCase_id', useCasesArray);
           //   });
           // }
           // if (industries !== undefined) {
           //   const industriesArray = industries.split(',');
-          //   queryBuilder.whereIn('apps.id', function () {
+          //   queryBuilder.whereIn('products.id', function () {
           //     this.select('app_id')
-          //       .from('industriesApps')
+          //       .from('industriesProducts')
           //       .whereIn('industry_id', industriesArray);
           //   });
           // }
@@ -571,20 +576,20 @@ const getAppsBy = async ({
   }
 };
 
-// Get apps by id
-const getAppById = async (id) => {
+// Get products by id
+const getProductById = async (id) => {
   if (!id) {
     throw new HttpError('Id should be a number', 400);
   }
   try {
-    const app = await knex('apps')
+    const app = await knex('products')
       .select(
-        'apps.*',
+        'products.*',
         'categories.title as categoryTitle',
         'categories.slug as categorySlug',
       )
-      .join('categories', 'apps.category_id', '=', 'categories.id')
-      .where({ 'apps.slug': id });
+      .join('categories', 'products.category_id', '=', 'categories.id')
+      .where({ 'products.slug': id });
     if (app.length === 0) {
       throw new HttpError(`incorrect entry with the id of ${id}`, 404);
     }
@@ -595,14 +600,14 @@ const getAppById = async (id) => {
 };
 
 // post
-// const createApps = async (token, body) => {
+// const createProducts = async (token, body) => {
 //   try {
 //     const userUid = token.split(' ')[1];
 //     const user = (await knex('users').where({ uid: userUid }))[0];
 //     if (!user) {
 //       throw new HttpError('User not found', 401);
 //     }
-//     await knex('apps').insert({
+//     await knex('products').insert({
 //       title: body.title,
 //       description: body.description,
 //       topic_id: body.topic_id,
@@ -616,7 +621,7 @@ const getAppById = async (id) => {
 //   }
 // };
 
-const createAppNode = async (token, body) => {
+const createProductNode = async (token, body) => {
   try {
     const userUid = token.split(' ')[1];
     const user = (await knex('users').where({ uid: userUid }))[0];
@@ -624,23 +629,23 @@ const createAppNode = async (token, body) => {
 
     const normalizedUrl = body.url ? normalizeUrl(body.url) : null;
 
-    const appleId = await getAppleId(body);
+    const appleId = await getProductleId(body);
 
-    // === Check for existing apps ===
+    // === Check for existing products ===
     if (appleId) {
-      const existingApp = await knex('apps')
+      const existingProduct = await knex('products')
         .whereRaw('LOWER(apple_id) = ?', [String(appleId).toLowerCase()])
         .first();
-      if (existingApp)
+      if (existingProduct)
         return {
           successful: true,
           existing: true,
-          appId: existingApp.id,
+          appId: existingProduct.id,
           appTitle: body.title,
-          appAppleId: existingApp.apple_id,
+          appProductleId: existingProduct.apple_id,
         };
     } else {
-      const existingUrl = await knex('apps')
+      const existingUrl = await knex('products')
         .where({ url: normalizedUrl })
         .orWhere({ title: body.title })
         .first();
@@ -701,7 +706,7 @@ const createAppNode = async (token, body) => {
       const appInfo = lookupData.results[0];
       description = appInfo.description;
       urlIcon = appInfo.artworkUrl512;
-      const normalizedUrlAppleId = appInfo.sellerUrl
+      const normalizedUrlProductleId = appInfo.sellerUrl
         ? normalizeUrl(appInfo.sellerUrl)
         : null;
 
@@ -717,7 +722,7 @@ const createAppNode = async (token, body) => {
         free,
       } = app;
 
-      appUrl = body.url ? normalizedUrl : normalizedUrlAppleId;
+      appUrl = body.url ? normalizedUrl : normalizedUrlProductleId;
       appExtra = {
         apple_id: appleId,
         url_icon: urlIcon,
@@ -813,7 +818,7 @@ Respond ONLY with valid JSON.`,
 - How to log in "${body.title}".
 - How to log out "${body.title}".
 - Is app "${body.title}" on Android?
-- App "${body.title}" doesn't work? Any common bugs? How to solve them?
+- Product "${body.title}" doesn't work? Any common bugs? How to solve them?
 - Is app "${body.title}" safe to use? Is it legit or scammy?
 - Can you make money with app "${body.title}"?
 - Does it make sense to upgrade in app "${
@@ -849,10 +854,10 @@ Respond ONLY with valid JSON.`,
     ]);
 
     const baseSlug = generateSlug(body.title);
-    const uniqueSlug = await ensureUniqueSlugItems(baseSlug, 'apps');
+    const uniqueSlug = await ensureUniqueSlugItems(baseSlug, 'products');
 
     // === Insert app ===
-    const [appId] = await knex('apps').insert({
+    const [appId] = await knex('products').insert({
       title: body.title,
       slug: uniqueSlug,
       category_id: body.category_id,
@@ -914,23 +919,23 @@ Respond ONLY with valid JSON.`,
       Promise.all(
         ids.map((id) => knex(table).insert({ app_id: appId, [key]: id })),
       );
-    await insertRelations('tagsApps', 'tag_id', tagIds);
-    await insertRelations('featuresApps', 'feature_id', featuresIds);
-    await insertRelations('userTypesApps', 'userType_id', userTypesIds);
+    await insertRelations('tagsProducts', 'tag_id', tagIds);
+    await insertRelations('featuresProducts', 'feature_id', featuresIds);
+    await insertRelations('userTypesProducts', 'userType_id', userTypesIds);
     await insertRelations(
-      'businessModelsApps',
+      'businessModelsProducts',
       'businessModel_id',
       businessModelsIds,
     );
-    await insertRelations('useCasesApps', 'useCase_id', useCasesIds);
-    await insertRelations('industriesApps', 'industry_id', industriesIds);
+    await insertRelations('useCasesProducts', 'useCase_id', useCasesIds);
+    await insertRelations('industriesProducts', 'industry_id', industriesIds);
 
     return {
       successful: true,
       appId,
       appTitle: body.title,
       url: appUrl,
-      appAppleId: appleId || null,
+      appProductleId: appleId || null,
     };
   } catch (error) {
     return error.message;
@@ -938,7 +943,7 @@ Respond ONLY with valid JSON.`,
 };
 
 // edit
-const editApp = async (token, updatedAppId, body) => {
+const editProduct = async (token, updatedProductId, body) => {
   try {
     const userUid = token.split(' ')[1];
     const user = (await knex('users').where({ uid: userUid }))[0];
@@ -946,11 +951,11 @@ const editApp = async (token, updatedAppId, body) => {
       throw new HttpError('User not found', 401);
     }
 
-    if (!updatedAppId) {
-      throw new HttpError('updatedAppId should be a number', 400);
+    if (!updatedProductId) {
+      throw new HttpError('updatedProductId should be a number', 400);
     }
 
-    await knex('apps').where({ id: updatedAppId }).update({
+    await knex('products').where({ id: updatedProductId }).update({
       description: body.description,
     });
 
@@ -963,16 +968,16 @@ const editApp = async (token, updatedAppId, body) => {
 };
 
 module.exports = {
-  getApps,
-  getAppsPagination,
-  getAppsSearch,
-  getAppsByCategories,
-  getAppsBy,
-  getAppsByCategory,
-  getAppById,
-  getAppsAll,
-  // createApps,
-  editApp,
-  createAppNode,
-  getAppsByTag,
+  getProducts,
+  getProductsPagination,
+  getProductsSearch,
+  getProductsByCategories,
+  getProductsBy,
+  getProductsByCategory,
+  getProductById,
+  getProductsAll,
+  // createProducts,
+  editProduct,
+  createProductNode,
+  getProductsByTag,
 };

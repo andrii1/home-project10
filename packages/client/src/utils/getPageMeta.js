@@ -55,16 +55,16 @@ export const getPageMeta = ({ filterConfig }) => {
     const capitalizedLong = capitalizeFirstWord(allTitles.join(', '));
 
     return {
-      pageMetaTitle: `${capitalizedLong} apps - Try Top Apps`,
-      pageMetaDescription: `${capitalizedLong} apps - reviews, how to use, tutorials, deals, promo codes, errors.`,
-      pageHeaderTitle: `${capitalizedShort} apps`,
+      pageMetaTitle: `${capitalizedLong} products - Try Top Products`,
+      pageMetaDescription: `${capitalizedLong} products - reviews, how to use, tutorials, deals, promo codes, errors.`,
+      pageHeaderTitle: `${capitalizedShort} products`,
     };
   }
 
   return {
-    pageMetaTitle: 'Try Top Apps - find best apps',
+    pageMetaTitle: 'Try Top Products - find best products',
     pageMetaDescription:
       'Reviews, how to use, tutorials, deals, promo codes, errors.',
-    pageHeaderTitle: 'Find best apps',
+    pageHeaderTitle: 'Find best products',
   };
 };

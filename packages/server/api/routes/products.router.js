@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 
 // controllers
-const appsController = require('../controllers/apps.controller');
+const productsController = require('../controllers/products.controller');
 
 /**
  * @swagger
@@ -40,8 +40,8 @@ router.get('/', (req, res, next) => {
     req.query.industries
   ) {
     // const array = req.query.filteredTopics.split(',');
-    appsController
-      .getAppsBy({
+    productsController
+      .getProductsBy({
         page: req.query.page,
         column: req.query.column,
         direction: req.query.direction,
@@ -63,8 +63,8 @@ router.get('/', (req, res, next) => {
   }
   // else if (req.query.filteredCategories) {
   //   const array = req.query.filteredCategories.split(',');
-  //   appsController
-  //     .getAppsByCategory(
+  //   productsController
+  //     .getProductsByCategory(
   //       req.query.filteredCategories,
   //       req.query.page,
   //       req.query.column,
@@ -73,8 +73,8 @@ router.get('/', (req, res, next) => {
   //     .then((result) => res.json(result))
   //     .catch(next);
   // } else if (req.query.search) {
-  //   appsController
-  //     .getAppsSearch(
+  //   productsController
+  //     .getProductsSearch(
   //       req.query.search,
   //       req.query.column,
   //       req.query.direction,
@@ -85,8 +85,8 @@ router.get('/', (req, res, next) => {
   //     .catch(next);
   // }
   else if (req.query.tag) {
-    appsController
-      .getAppsByTag(
+    productsController
+      .getProductsByTag(
         req.query.page,
         req.query.column,
         req.query.direction,
@@ -95,24 +95,24 @@ router.get('/', (req, res, next) => {
       .then((result) => res.json(result))
       .catch(next);
   } else if (req.query.page) {
-    appsController
-      .getApps(req.query.page, req.query.column, req.query.direction)
+    productsController
+      .getProducts(req.query.page, req.query.column, req.query.direction)
       .then((result) => res.json(result))
       .catch(next);
   } else {
-    appsController
-      .getAppsAll()
+    productsController
+      .getProductsAll()
       .then((result) => res.json(result))
       .catch(next);
   }
 });
 
-/* Create Apps */
+/* Create Products */
 
 router.post('/', (req, res, next) => {
   const { token } = req.headers;
-  appsController
-    .createApps(token, req.body)
+  productsController
+    .createProducts(token, req.body)
     .then((result) => res.json(result))
     .catch(next);
 });
@@ -143,24 +143,24 @@ router.post('/', (req, res, next) => {
  */
 
 router.get('/:id', (req, res, next) => {
-  appsController
-    .getAppById(req.params.id)
+  productsController
+    .getProductById(req.params.id)
     .then((result) => res.json(result))
     .catch(next);
 });
 
 router.patch('/:id', (req, res, next) => {
   const { token } = req.headers;
-  appsController
-    .editApp(token, req.params.id, req.body)
+  productsController
+    .editProduct(token, req.params.id, req.body)
     .then((result) => res.json(result))
     .catch(next);
 });
 
 router.post('/node', (req, res) => {
   const { token } = req.headers;
-  appsController
-    .createAppNode(token, req.body)
+  productsController
+    .createProductNode(token, req.body)
     .then((result) => res.json(result))
     .catch((error) => {
       // eslint-disable-next-line no-console

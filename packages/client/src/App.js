@@ -2,11 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { Categories } from './containers/Categories/Categories.Container';
-import { Apps } from './containers/Apps/Apps.Container';
+import { Products } from './containers/Products/Products.Container';
 import { LandingPage } from './containers/LandingPage/LandingPage.Container';
 import TestPage from './containers/TestPage/TestPage.Container';
 import { Prompts } from './containers/Prompts/Prompts.Container';
-import { AppView } from './containers/AppView/AppView.container';
+import { ProductView } from './containers/ProductView/ProductView.container';
 import { Signup } from './containers/Signup/Signup.Container';
 import Login from './containers/Login/Login.Container';
 import Reset from './containers/Reset/Reset.Container';
@@ -28,22 +28,30 @@ function App() {
         <UserProvider>
           <Navigation />
           <Routes>
-            <Route path="/" element={<Apps />} />
-            {/* <Route path="/apps" element={<Apps />} /> */}
+            <Route path="/" element={<Products />} />
+            {/* <Route path="/products" element={<Products />} /> */}
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/test" element={<Prompts />} />
             <Route path="/categories" element={<Categories />} />
-            <Route exact path="/apps/:slug" element={<AppView />} />
-            <Route path="/apps/*" element={<Apps />} />
+            <Route exact path="/products/:slug" element={<ProductView />} />
+            <Route path="/products/*" element={<Products />} />
             <Route
               exact
-              path="/apps/category/:categoryIdParam"
-              element={<Apps />}
+              path="/products/category/:categoryIdParam"
+              element={<Products />}
             />
-            <Route exact path="/apps/search/:searchParam" element={<Apps />} />
-            <Route exact path="/apps/tag/:tagSlugParam" element={<Apps />} />
+            <Route
+              exact
+              path="/products/search/:searchParam"
+              element={<Products />}
+            />
+            <Route
+              exact
+              path="/products/tag/:tagSlugParam"
+              element={<Products />}
+            />
             <Route exact path="/faq" element={<Faq />} />
-            <Route exact path="/apps/new" element={<Submit />} />
+            <Route exact path="/products/new" element={<Submit />} />
             <Route exact path="/success" element={<StripeSuccess />} />
             <Route exact path="/cancel" element={<StripeCancel />} />
             <Route exact path="/bookmarks" element={<Bookmarks />} />

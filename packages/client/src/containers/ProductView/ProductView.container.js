@@ -13,7 +13,7 @@ import { Card } from '../../components/Card/Card.component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Modal from '../../components/Modal/Modal.Component';
 import iconCopy from '../../assets/images/icons8-copy-24.png';
-import appStoreLogo from '../../assets/images/download-on-the-app-store-apple-logo.svg';
+import productStoreLogo from '../../assets/images/download-on-the-app-store-apple-logo.svg';
 import googlePlayStoreLogo from '../../assets/images/google-play-badge-logo.svg';
 import macLogo from '../../assets/images/macos.svg';
 import windowsLogo from '../../assets/images/windows.svg';
@@ -51,33 +51,42 @@ import appImage from '../../assets/images/app-placeholder.svg';
 import { faHeart, faCopy } from '@fortawesome/free-regular-svg-icons';
 
 import { apiURL } from '../../apiURL';
-import './AppView.styles.css';
+import './ProductView.styles.css';
 import { useUserContext } from '../../userContext';
 import { getMostUsedWords } from '../../utils/getMostUsedWords';
 import { getDateFromTimestamp } from '../../utils/getDateFromTimestamp';
 
 const faqConfig = [
-  { key: 'faq_create_account', title: 'How to create an account in {app}?' },
-  { key: 'faq_delete_account', title: 'How to delete {app} account?' },
+  {
+    key: 'faq_create_account',
+    title: 'How to create an account in {product}?',
+  },
+  { key: 'faq_delete_account', title: 'How to delete {product} account?' },
   {
     key: 'faq_cancel_subscription',
-    title: 'How to cancel subscription in {app}?',
+    title: 'How to cancel subscription in {product}?',
   },
   {
     key: 'faq_change_profile_picture',
     title: 'How to change profile picture?',
   },
-  { key: 'faq_log_in', title: 'How to log in to {app}?' },
-  { key: 'faq_log_out', title: 'How to log out from {app}?' },
-  { key: 'faq_is_app_on_android', title: 'Is {app} available on Android?' },
-  { key: 'faq_app_doesnt_work_bugs', title: "{app} doesn't work, bugs" },
-  { key: 'faq_is_safe_to_use', title: 'Is {app} safe to use?' },
-  { key: 'faq_how_to_make_money', title: 'Can you make money with {app}?' },
+  { key: 'faq_log_in', title: 'How to log in to {product}?' },
+  { key: 'faq_log_out', title: 'How to log out from {product}?' },
+  {
+    key: 'faq_is_product_on_android',
+    title: 'Is {product} available on Android?',
+  },
+  {
+    key: 'faq_product_doesnt_work_bugs',
+    title: "{product} doesn't work, bugs",
+  },
+  { key: 'faq_is_safe_to_use', title: 'Is {product} safe to use?' },
+  { key: 'faq_how_to_make_money', title: 'Can you make money with {product}?' },
   { key: 'faq_should_you_upgrade', title: 'Should you upgrade?' },
-  { key: 'faq_can_use_for_free', title: '{app} for free?' },
+  { key: 'faq_can_use_for_free', title: '{product} for free?' },
 ];
 
-export const AppView = () => {
+export const ProductView = () => {
   const { slug } = useParams();
   const [openModal, setOpenModal] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
@@ -87,12 +96,14 @@ export const AppView = () => {
   const [favorites, setFavorites] = useState([]);
   const [topicsFromDeals, setTopicsFromDeals] = useState([]);
   const navigate = useNavigate();
-  const [app, setApp] = useState({});
+  const [product, setProduct] = useState({});
   const [dealCodes, setDealCodes] = useState([]);
-  const [appAppStore, setAppAppStore] = useState({});
-  const [appAppStoreScraper, setAppAppStoreScraper] = useState({});
-  const [similarApps, setSimilarApps] = useState([]);
-  const [similarDealsFromApp, setSimilarDealsFromApp] = useState([]);
+  const [productProductStore, setProductProductStore] = useState({});
+  const [productProductStoreScraper, setProductProductStoreScraper] = useState(
+    {},
+  );
+  const [similarProducts, setSimilarProducts] = useState([]);
+  const [similarDealsFromProduct, setSimilarDealsFromProduct] = useState([]);
   const [comments, setComments] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -130,72 +141,82 @@ export const AppView = () => {
   const [faqs, setFaqs] = useState([]);
 
   useEffect(() => {
-    async function fetchSingleApp(appId) {
-      const response = await fetch(`${apiURL()}/apps/${appId}`);
-      const appResponse = await response.json();
-      setApp(appResponse[0]);
-      setId(appResponse[0].id);
+    async function fetchSingleProduct(productId) {
+      const response = await fetch(`${apiURL()}/products/${productId}`);
+      const productResponse = await response.json();
+      setProduct(productResponse[0]);
+      setId(productResponse[0].id);
     }
 
-    fetchSingleApp(slug);
+    fetchSingleProduct(slug);
   }, [slug]);
 
   useEffect(() => {
-    async function fetchTagsForApp(appId) {
-      const response = await fetch(`${apiURL()}/tags/?app=${appId}`);
+    async function fetchTagsForProduct(productId) {
+      const response = await fetch(`${apiURL()}/tags/?product=${productId}`);
       const data = await response.json();
       setTags(data);
     }
 
-    async function fetchBusinessModelsForApp(appId) {
-      const response = await fetch(`${apiURL()}/businessModels/?app=${appId}`);
+    async function fetchBusinessModelsForProduct(productId) {
+      const response = await fetch(
+        `${apiURL()}/businessModels/?product=${productId}`,
+      );
       const data = await response.json();
       setBusinessModels(data);
     }
 
-    async function fetchFeaturesForApp(appId) {
-      const response = await fetch(`${apiURL()}/features/?app=${appId}`);
+    async function fetchFeaturesForProduct(productId) {
+      const response = await fetch(
+        `${apiURL()}/features/?product=${productId}`,
+      );
       const data = await response.json();
       setFeatures(data);
     }
 
-    async function fetchIndustriesForApp(appId) {
-      const response = await fetch(`${apiURL()}/industries/?app=${appId}`);
+    async function fetchIndustriesForProduct(productId) {
+      const response = await fetch(
+        `${apiURL()}/industries/?product=${productId}`,
+      );
       const data = await response.json();
       setIndustries(data);
     }
 
-    async function fetchUseCasesForApp(appId) {
-      const response = await fetch(`${apiURL()}/useCases/?app=${appId}`);
+    async function fetchUseCasesForProduct(productId) {
+      const response = await fetch(
+        `${apiURL()}/useCases/?product=${productId}`,
+      );
       const data = await response.json();
       setUseCases(data);
     }
 
-    async function fetchUserTypesForApp(appId) {
-      const response = await fetch(`${apiURL()}/userTypes/?app=${appId}`);
+    async function fetchUserTypesForProduct(productId) {
+      const response = await fetch(
+        `${apiURL()}/userTypes/?product=${productId}`,
+      );
       const data = await response.json();
       setUserTypes(data);
     }
 
     // async function fetchCodesForADeal(dealId) {
     //   const response = await fetch(`${apiURL()}/codes/?deal=${dealId}`);
-    //   const appResponse = await response.json();
-    //   setDealCodes(appResponse);
+    //   const productResponse = await response.json();
+    //   setDealCodes(productResponse);
     // }
 
     // async function fetchSearchesForADeal(dealId) {
     //   const response = await fetch(`${apiURL()}/searches/?deal=${dealId}`);
-    //   const appResponse = await response.json();
-    //   setSearches(appResponse);
+    //   const productResponse = await response.json();
+    //   setSearches(productResponse);
     // }
 
     // async function fetchKeywordsForADeal(dealId) {
     //   const response = await fetch(`${apiURL()}/keywords/?deal=${dealId}`);
-    //   const appResponse = await response.json();
-    //   setKeywords(appResponse);
+    //   const productResponse = await response.json();
+    //   setKeywords(productResponse);
     // }
 
-    // fetchSingleApp(id);
+    // fetchSingleProduct(id);
     // fetchCodesForADeal(id);
     // fetchSearchesForADeal(id);
     // fetchKeywordsForADeal(id);
@@ -204,12 +225,12 @@ export const AppView = () => {
       setLoading(true);
       setError(null); // Clear previous errors
       try {
-        await fetchTagsForApp(id);
-        await fetchBusinessModelsForApp(id);
-        await fetchFeaturesForApp(id);
-        await fetchIndustriesForApp(id);
-        await fetchUseCasesForApp(id);
-        await fetchUserTypesForApp(id);
+        await fetchTagsForProduct(id);
+        await fetchBusinessModelsForProduct(id);
+        await fetchFeaturesForProduct(id);
+        await fetchIndustriesForProduct(id);
+        await fetchUseCasesForProduct(id);
+        await fetchUserTypesForProduct(id);
         // await fetchCodesForADeal(id);
         // await fetchSearchesForADeal(id);
         // await fetchKeywordsForADeal(id);
@@ -224,83 +245,86 @@ export const AppView = () => {
   }, [id]);
 
   useEffect(() => {
-    async function fetchAppAppStore(appleId) {
-      setLoading(true);
-      try {
-        const response = await fetch(`${apiURL()}/appsAppStore/${appleId}`);
-        const example = await response.json();
-        setAppAppStore(example.results[0]);
-      } catch (e) {
-        setError({ message: e.message || 'Failed to fetch data' });
-      }
-      setLoading(false);
-    }
-    app.apple_id && fetchAppAppStore(app.apple_id);
-  }, [app.apple_id]);
-
-  useEffect(() => {
-    async function fetchAppAppStoreScraper(appleId) {
+    async function fetchProductProductStore(productleId) {
       setLoading(true);
       try {
         const response = await fetch(
-          `${apiURL()}/appsAppStoreScraper/${appleId}`,
+          `${apiURL()}/productsProductStore/${productleId}`,
         );
-        const data = await response.json();
-        setAppAppStoreScraper(data);
+        const example = await response.json();
+        setProductProductStore(example.results[0]);
       } catch (e) {
         setError({ message: e.message || 'Failed to fetch data' });
       }
       setLoading(false);
     }
-    app.apple_id && fetchAppAppStoreScraper(app.apple_id);
-  }, [app.apple_id]);
+    product.productle_id && fetchProductProductStore(product.productle_id);
+  }, [product.productle_id]);
+
+  useEffect(() => {
+    async function fetchProductProductStoreScraper(productleId) {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${apiURL()}/productsProductStoreScraper/${productleId}`,
+        );
+        const data = await response.json();
+        setProductProductStoreScraper(data);
+      } catch (e) {
+        setError({ message: e.message || 'Failed to fetch data' });
+      }
+      setLoading(false);
+    }
+    product.productle_id &&
+      fetchProductProductStoreScraper(product.productle_id);
+  }, [product.productle_id]);
 
   useEffect(() => {
     const faqArray = faqConfig
-      .filter(({ key }) => app[key])
+      .filter(({ key }) => product[key])
       .map(({ key, title }) => ({
         id: key,
-        title: title.replace('{app}', app.title || 'this app'),
-        text: app[key],
+        title: title.replace('{product}', product.title || 'this product'),
+        text: product[key],
         open: false,
       }));
 
     setFaqs(faqArray);
-  }, [app]);
+  }, [product]);
 
   useEffect(() => {
-    async function fetchSimilarApps() {
+    async function fetchSimilarProducts() {
       setLoading(true);
       try {
-        const response = await fetch(`${apiURL()}/apps`);
+        const response = await fetch(`${apiURL()}/products`);
         const data = await response.json();
-        const similarAppsArray = data
-          .filter((item) => item.category_id === app.category_id)
-          .filter((item) => item.id !== app.id);
-        setSimilarApps(similarAppsArray);
+        const similarProductsArray = data
+          .filter((item) => item.category_id === product.category_id)
+          .filter((item) => item.id !== product.id);
+        setSimilarProducts(similarProductsArray);
 
-        // const similarDealsFromAppArray = appsResponse
-        //   .filter((item) => item.app_id === app.app_id)
-        //   .filter((item) => item.id !== app.id);
-        // setSimilarDealsFromApp(similarDealsFromAppArray);
+        // const similarDealsFromProductArray = productsResponse
+        //   .filter((item) => item.product_id === product.product_id)
+        //   .filter((item) => item.id !== product.id);
+        // setSimilarDealsFromProduct(similarDealsFromProductArray);
       } catch (e) {
         setError({ message: e.message || 'Failed to fetch data' });
       }
       setLoading(false);
     }
 
-    fetchSimilarApps();
-  }, [app.id, app.category_id]);
+    fetchSimilarProducts();
+  }, [product.id, product.category_id]);
 
-  const fetchCommentsByAppId = useCallback(async (appId) => {
-    const response = await fetch(`${apiURL()}/comments?appId=${appId}`);
+  const fetchCommentsByProductId = useCallback(async (productId) => {
+    const response = await fetch(`${apiURL()}/comments?productId=${productId}`);
     const commentResponse = await response.json();
     setComments(commentResponse);
   }, []);
 
   useEffect(() => {
-    fetchCommentsByAppId(id);
-  }, [fetchCommentsByAppId, id]);
+    fetchCommentsByProductId(id);
+  }, [fetchCommentsByProductId, id]);
 
   const navigateBack = () => {
     navigate(-1);
@@ -311,15 +335,15 @@ export const AppView = () => {
       method: 'POST',
       headers: {
         token: `token ${user?.uid}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'productlication/json',
       },
       body: JSON.stringify({
         content: commentContent,
-        app_id: id,
+        product_id: id,
       }),
     });
     if (response.ok) {
-      fetchCommentsByAppId(id);
+      fetchCommentsByProductId(id);
     }
   };
 
@@ -357,19 +381,22 @@ export const AppView = () => {
     async function fetchData() {
       setLoading(true);
       const results = [];
-      const combinedText = `${app?.description} ${app?.description_long} ${app?.appDescription}`;
+      const combinedText = `${product?.description} ${product?.description_long} ${product?.productDescription}`;
       const words = getMostUsedWords(combinedText, 10);
 
       for (const [word] of words) {
         try {
           const res = await fetch(
-            `${apiURL()}/apps?page=0&column=id&direction=desc&search=${encodeURIComponent(
+            `${apiURL()}/products?page=0&column=id&direction=desc&search=${encodeURIComponent(
               word,
             )}`,
           );
           const data = await res.json();
           if (data.data.length > 1) {
-            const wordWithLink = { title: word, url: `apps/search/${word}` };
+            const wordWithLink = {
+              title: word,
+              url: `products/search/${word}`,
+            };
             results.push(wordWithLink);
           }
         } catch (err) {
@@ -380,41 +407,45 @@ export const AppView = () => {
       setTopicsFromDeals(results);
       setLoading(false);
     }
-    if (app?.description) {
+    if (product?.description) {
       fetchData();
     }
-  }, [app.description, app.description_long, app.appDescription]);
+  }, [
+    product.description,
+    product.description_long,
+    product.productDescription,
+  ]);
 
-  const cardItems = similarApps.map((item) => {
+  const cardItems = similarProducts.map((item) => {
     // const relatedTopics = topics
     //   .filter((topic) => topic.categoryId === category.id)
     //   .map((item) => item.id);
     return (
       <Card
         id={item.id}
-        cardUrl={`/apps/${item.slug}`}
+        cardUrl={`/products/${item.slug}`}
         title={item.title}
         description={item.description}
         url={item.url}
         urlImage={item.url_image === null ? 'deal' : item.url_image}
         topic={item.categoryTitle}
-        appTitle={item.appTitle}
+        productTitle={item.productTitle}
         smallCard
       />
     );
   });
 
-  // const cardItemsSimilarDealsFromApp = similarDealsFromApp.map((item) => {
+  // const cardItemsSimilarDealsFromProduct = similarDealsFromProduct.map((item) => {
   //   return (
   //     <Card
   //       id={item.id}
-  //       cardUrl={`/apps/${item.id}`}
+  //       cardUrl={`/products/${item.id}`}
   //       title={item.title}
   //       description={item.description}
   //       url={item.url}
   //       urlImage={item.url_image === null ? 'deal' : item.url_image}
   //       topic={item.topicTitle}
-  //       appTitle={item.appTitle}
+  //       productTitle={item.productTitle}
   //       smallCard
   //     />
   //   );
@@ -422,7 +453,7 @@ export const AppView = () => {
 
   const searchItems = searches.map((search) => {
     return (
-      <Link to={`../../apps/searchterm/${search.id}`} target="_blank">
+      <Link to={`../../products/searchterm/${search.id}`} target="_blank">
         <Button
           size="medium"
           secondary
@@ -453,15 +484,15 @@ export const AppView = () => {
     fetchFavorites();
   }, [fetchFavorites]);
 
-  const addFavorite = async (appId) => {
+  const addFavorite = async (productId) => {
     const response = await fetch(`${apiURL()}/favorites`, {
       method: 'POST',
       headers: {
         token: `token ${user?.uid}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'productlication/json',
       },
       body: JSON.stringify({
-        app_id: appId,
+        product_id: productId,
       }),
     });
     if (response.ok) {
@@ -522,15 +553,15 @@ export const AppView = () => {
     fetchRatings();
   }, [fetchRatings]);
 
-  const addRating = async (appId) => {
+  const addRating = async (productId) => {
     const response = await fetch(`${apiURL()}/ratings`, {
       method: 'POST',
       headers: {
         token: `token ${user?.uid}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'productlication/json',
       },
       body: JSON.stringify({
-        app_id: appId,
+        product_id: productId,
       }),
     });
     if (response.ok) {
@@ -539,12 +570,12 @@ export const AppView = () => {
     }
   };
 
-  const deleteRating = async (appId) => {
-    const response = await fetch(`${apiURL()}/ratings/${appId}`, {
+  const deleteRating = async (productId) => {
+    const response = await fetch(`${apiURL()}/ratings/${productId}`, {
       method: 'DELETE',
       headers: {
         token: `token ${user?.uid}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'productlication/json',
       },
     });
     if (response.ok) {
@@ -649,34 +680,34 @@ export const AppView = () => {
   return (
     <>
       <Helmet>
-        <title>{`${app?.title} - Try Top Apps`}</title>
+        <title>{`${product?.title} - Try Top Products`}</title>
         <meta
           name="description"
           content={
             keywords.length > 0
               ? keywords.map((keyword) => keyword.title).join(', ')
-              : `${app?.title} review, ${app?.title} how to use, ${app?.title} tutorial, ${app?.title} overview, ${app?.title} deals.`
+              : `${product?.title} review, ${product?.title} how to use, ${product?.title} tutorial, ${product?.title} overview, ${product?.title} deals.`
           }
         />
       </Helmet>
       <main>
         <section className="container-appview">
           <div className="header">
-            <h1 className="hero-header">{app?.title}</h1>
+            <h1 className="hero-header">{product?.title}</h1>
           </div>
-          {app.url_icon ? (
+          {product.url_icon ? (
             <img
               className="appview-icon default-icon"
-              alt={`${app.title}`}
-              src={app.url_icon || mousePointer}
+              alt={`${product.title}`}
+              src={product.url_icon || mousePointer}
             />
           ) : (
             <Globe size="15rem" className="appview-icon default-icon" />
           )}
           {/* <img
-            className={`appview-icon ${!app.url_icon && 'default-icon'}`}
-            alt={`${app.title}`}
-            src={app.url_icon || mousePointer}
+            className={`appview-icon ${!product.url_icon && 'default-icon'}`}
+            alt={`${product.title}`}
+            src={product.url_icon || mousePointer}
           /> */}
 
           {/* <ImageGallery items={images} /> */}
@@ -684,29 +715,31 @@ export const AppView = () => {
             <div className="container-rating">
               Rating
               {user &&
-              allRatings.some((rating) => rating.app_id === app.id) &&
-              ratings.some((rating) => rating.id === app.id) ? (
+              allRatings.some((rating) => rating.product_id === product.id) &&
+              ratings.some((rating) => rating.id === product.id) ? (
                 <button
                   type="button"
                   className="button-rating"
-                  onClick={(event) => deleteRating(app.id)}
+                  onClick={(event) => deleteRating(product.id)}
                 >
                   <FontAwesomeIcon icon={faCaretUp} />
                   {
-                    allRatings.filter((rating) => rating.app_id === app.id)
-                      .length
+                    allRatings.filter(
+                      (rating) => rating.product_id === product.id,
+                    ).length
                   }
                 </button>
               ) : user ? (
                 <button
                   type="button"
                   className="button-rating"
-                  onClick={(event) => addRating(app.id)}
+                  onClick={(event) => addRating(product.id)}
                 >
                   <FontAwesomeIcon icon={faCaretUp} />
                   {
-                    allRatings.filter((rating) => rating.app_id === app.id)
-                      .length
+                    allRatings.filter(
+                      (rating) => rating.product_id === product.id,
+                    ).length
                   }
                 </button>
               ) : (
@@ -720,15 +753,16 @@ export const AppView = () => {
                 >
                   <FontAwesomeIcon icon={faCaretUp} />
                   {
-                    allRatings.filter((rating) => rating.app_id === app.id)
-                      .length
+                    allRatings.filter(
+                      (rating) => rating.product_id === product.id,
+                    ).length
                   }
                 </button>
               )}
             </div>
             <div className="container-appview-buttons">
-              {app.url && (
-                <Link to={app.url} target="_blank">
+              {product.url && (
+                <Link to={product.url} target="_blank">
                   <Button
                     size="large"
                     secondary
@@ -744,24 +778,24 @@ export const AppView = () => {
               )}
             </div>
             <div>
-              {user && favorites.some((x) => x.id === app.id) ? (
+              {user && favorites.some((x) => x.id === product.id) ? (
                 <button
                   type="button"
-                  onClick={() => handleDeleteBookmarks(app.id)}
-                  onKeyDown={() => handleDeleteBookmarks(app.id)}
+                  onClick={() => handleDeleteBookmarks(product.id)}
+                  onKeyDown={() => handleDeleteBookmarks(product.id)}
                   className="button-bookmark"
                 >
-                  Remove app from saved &nbsp;
+                  Remove product from saved &nbsp;
                   <FontAwesomeIcon icon={faHeartSolid} size="lg" />
                 </button>
               ) : user ? (
                 <button
                   type="button"
-                  onClick={() => addFavorite(app.id)}
-                  onKeyDown={() => addFavorite(app.id)}
+                  onClick={() => addFavorite(product.id)}
+                  onKeyDown={() => addFavorite(product.id)}
                   className="button-bookmark"
                 >
-                  Save this app &nbsp;
+                  Save this product &nbsp;
                   <FontAwesomeIcon icon={faHeart} size="lg" />
                 </button>
               ) : (
@@ -771,7 +805,7 @@ export const AppView = () => {
                     setOpenModal(true);
                     setModalTitle('Sign up to add bookmarks');
                   }}
-                  onKeyDown={() => addFavorite(app.id)}
+                  onKeyDown={() => addFavorite(product.id)}
                   className="button-bookmark"
                 >
                   Save <FontAwesomeIcon icon={faHeart} size="lg" />
@@ -784,28 +818,28 @@ export const AppView = () => {
             <div className="container-tags">
               <div className="badges">
                 <div className="badges-keywords">
-                  {!!app.pricing_free && (
-                    <Link to="../apps/pricing/free">
+                  {!!product.pricing_free && (
+                    <Link to="../products/pricing/free">
                       <Button secondary label="free" size="small" />
                     </Link>
                   )}
-                  {!!app.pricing_freemium && (
-                    <Link to="../apps/pricing/freemium">
+                  {!!product.pricing_freemium && (
+                    <Link to="../products/pricing/freemium">
                       <Button secondary label="freemium" size="small" />
                     </Link>
                   )}
-                  {!!app.pricing_subscription && (
-                    <Link to="../apps/pricing/subscription">
+                  {!!product.pricing_subscription && (
+                    <Link to="../products/pricing/subscription">
                       <Button secondary label="subscription" size="small" />
                     </Link>
                   )}
-                  {!!app.pricing_one_time && (
-                    <Link to="../apps/pricing/one-time">
+                  {!!product.pricing_one_time && (
+                    <Link to="../products/pricing/one-time">
                       <Button secondary label="one-time" size="small" />
                     </Link>
                   )}
-                  {!!app.pricing_trial_available && (
-                    <Link to="../apps/pricing/trial">
+                  {!!product.pricing_trial_available && (
+                    <Link to="../products/pricing/trial">
                       <Button secondary label="trial" size="small" />
                     </Link>
                   )}
@@ -814,30 +848,30 @@ export const AppView = () => {
             </div>
             <div className="container-tags">
               <div className="badges">
-                <p className="p-no-margin">iOS app: </p>
+                <p className="p-no-margin">iOS product: </p>
                 <div className="badges-keywords">
-                  {!!app.pricing_ios_app_free && (
-                    <Link to="../apps/pricing/ios-free">
+                  {!!product.pricing_ios_product_free && (
+                    <Link to="../products/pricing/ios-free">
                       <Button secondary label="free" size="small" />
                     </Link>
                   )}
-                  {!!app.pricing_ios_app_paid && (
-                    <Link to="../apps/pricing/ios-paid">
+                  {!!product.pricing_ios_product_paid && (
+                    <Link to="../products/pricing/ios-paid">
                       <Button secondary label="paid" size="small" />
                     </Link>
                   )}
                 </div>
               </div>
             </div>
-            {!!app.pricing_ios_app_paid &&
-              app.price > 0 &&
-              `${app.price} ${app.currency}`}
-            {app.pricing_details && (
-              <p className="p-no-margin">{app.pricing_details}</p>
+            {!!product.pricing_ios_product_paid &&
+              product.price > 0 &&
+              `${product.price} ${product.currency}`}
+            {product.pricing_details && (
+              <p className="p-no-margin">{product.pricing_details}</p>
             )}
-            {app.pricing_url && (
+            {product.pricing_url && (
               <div>
-                <Link target="_blank" to={app.pricing_url}>
+                <Link target="_blank" to={product.pricing_url}>
                   <span className="underline">Pricing page</span>{' '}
                   <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />
                 </Link>
@@ -846,57 +880,57 @@ export const AppView = () => {
           </div>
           <div className="container-description">
             <div className="container-title">
-              <h2>{app.title}</h2>
+              <h2>{product.title}</h2>
             </div>
-            <p className="app-description main-description">
-              <Markdown>{app.description}</Markdown>
+            <p className="product-description main-description">
+              <Markdown>{product.description}</Markdown>
             </p>
 
-            {app.description_long && (
+            {product.description_long && (
               <>
-                <h3>App details</h3>
-                <p className="app-description">
+                <h3>Product details</h3>
+                <p className="product-description">
                   {' '}
-                  <Markdown>{app.description_long}</Markdown>
+                  <Markdown>{product.description_long}</Markdown>
                 </p>
               </>
             )}
           </div>
-          {app.description_how_to_use && (
+          {product.description_how_to_use && (
             <div className="container-description">
               <div className="container-title">
-                <h2>How to use {app.title}</h2>
+                <h2>How to use {product.title}</h2>
               </div>
-              <p className="app-description main-description">
-                <Markdown>{app.description_how_to_use}</Markdown>
+              <p className="product-description main-description">
+                <Markdown>{product.description_how_to_use}</Markdown>
               </p>
             </div>
           )}
-          {app.apple_id ||
-          app.url_google_play_store ||
-          app.url_chrome_extension ||
-          app.url_windows ||
-          app.url_mac ? (
+          {product.productle_id ||
+          product.url_google_play_store ||
+          product.url_chrome_extension ||
+          product.url_windows ||
+          product.url_mac ? (
             <div className="container-appview-box">
-              <h2>Download app</h2>
+              <h2>Download product</h2>
               <div className="container-store-logos">
-                {appAppStore.trackViewUrl && (
+                {productProductStore.trackViewUrl && (
                   <Link
                     target="_blank"
-                    to={appAppStore.trackViewUrl}
+                    to={productProductStore.trackViewUrl}
                     className="simple-link"
                   >
                     <img
-                      src={appStoreLogo}
-                      alt="App Store logo"
+                      src={productStoreLogo}
+                      alt="Product Store logo"
                       className="logo-store"
                     />
                   </Link>
                 )}
-                {app.url_google_play_store && (
+                {product.url_google_play_store && (
                   <Link
                     target="_blank"
-                    to={app.url_google_play_store}
+                    to={product.url_google_play_store}
                     className="simple-link"
                   >
                     <img
@@ -906,10 +940,10 @@ export const AppView = () => {
                     />
                   </Link>
                 )}
-                {app.url_chrome_extension && (
+                {product.url_chrome_extension && (
                   <Link
                     target="_blank"
-                    to={app.url_chrome_extension}
+                    to={product.url_chrome_extension}
                     className="simple-link"
                   >
                     <img
@@ -919,19 +953,19 @@ export const AppView = () => {
                     />
                   </Link>
                 )}
-                {app.url_mac && (
+                {product.url_mac && (
                   <Link
                     target="_blank"
-                    to={app.url_mac}
+                    to={product.url_mac}
                     className="simple-link"
                   >
                     <img src={macLogo} alt="Mac logo" className="logo-store" />
                   </Link>
                 )}
-                {app.url_windows && (
+                {product.url_windows && (
                   <Link
                     target="_blank"
-                    to={app.url_windows}
+                    to={product.url_windows}
                     className="simple-link"
                   >
                     <img
@@ -951,35 +985,37 @@ export const AppView = () => {
             {faqs.length > 0 ? (
               faqsItems
             ) : (
-              <p className="app-description ">No data yet</p>
+              <p className="product-description ">No data yet</p>
             )}
           </div>
 
-          {app.apple_id && (
+          {product.productle_id && (
             <div className="container-appview-box container-description">
-              <h2>{app.title} deals, promo codes, referral codes</h2>
-              <p className="app-description ">No data yet</p>
+              <h2>{product.title} deals, promo codes, referral codes</h2>
+              <p className="product-description ">No data yet</p>
             </div>
           )}
-          {app.apple_id && (
+          {product.productle_id && (
             <div className="container-appview-box container-description">
-              <h2>{app.title} errors</h2>
-              <p className="app-description ">No data yet</p>
+              <h2>{product.title} errors</h2>
+              <p className="product-description ">No data yet</p>
             </div>
           )}
-          {app.apple_id && (
+          {product.productle_id && (
             <div className="container-appview-box container-description">
-              <h2>Is {app.title} down?</h2>
-              <p className="app-description ">No data yet</p>
+              <h2>Is {product.title} down?</h2>
+              <p className="product-description ">No data yet</p>
             </div>
           )}
-          {app.apple_id && (
+          {product.productle_id && (
             <div className="container-appview-box container-description">
-              <h2>How to contact {app.title} support?</h2>
-              {app.faq_contact_support ? (
-                <p className="app-description ">{app.faq_contact_support}</p>
+              <h2>How to contact {product.title} support?</h2>
+              {product.faq_contact_support ? (
+                <p className="product-description ">
+                  {product.faq_contact_support}
+                </p>
               ) : (
-                <p className="app-description ">No data yet</p>
+                <p className="product-description ">No data yet</p>
               )}
             </div>
           )}
@@ -988,7 +1024,7 @@ export const AppView = () => {
               <>
                 <div className="container-title">
                   <h2>
-                    {app.title} -{' '}
+                    {product.title} -{' '}
                     {dealCodes.length > 0
                       ? `${showNumberOfCodesInTitle(dealCodes)}`
                       : ''}
@@ -1148,7 +1184,7 @@ export const AppView = () => {
           {!user && (
             <div className="container-details cta">
               <div>
-                <h2>🔥 Add your app!</h2>
+                <h2>🔥 Add your product!</h2>
                 <p>Create an account to get started for free</p>
               </div>
               <div>
@@ -1227,65 +1263,65 @@ export const AppView = () => {
           <div className="container-details container-badges">
             <h2 className="no-margin">Reviews</h2>
 
-            {appAppStore.averageUserRating && (
+            {productProductStore.averageUserRating && (
               <div className="container-tags">
                 <div className="badges">
                   <p>Average rating: </p>
-                  <div>{appAppStore.averageUserRating.toFixed(2)}</div>
+                  <div>{productProductStore.averageUserRating.toFixed(2)}</div>
                 </div>
               </div>
             )}
-            {appAppStore.userRatingCount && (
+            {productProductStore.userRatingCount && (
               <div className="container-tags">
                 <div className="badges">
                   <p>Number of ratings: </p>
-                  <div>{appAppStore.userRatingCount}</div>
+                  <div>{productProductStore.userRatingCount}</div>
                 </div>
               </div>
             )}
           </div>
           <div className="container-details container-badges">
             <h2 className="no-margin">Social media</h2>
-            {(!!app.url_x ||
-              !!app.url_discord ||
-              !!app.url_fb ||
-              !!app.url_linkedin ||
-              !!app['e-mail'] ||
-              !!app.url) && (
+            {(!!product.url_x ||
+              !!product.url_discord ||
+              !!product.url_fb ||
+              !!product.url_linkedin ||
+              !!product['e-mail'] ||
+              !!product.url) && (
               <div className="container-tags">
-                {!!app.url_x && (
-                  <Link to={app.url_x} target="_blank">
+                {!!product.url_x && (
+                  <Link to={product.url_x} target="_blank">
                     <FontAwesomeIcon className="share-icon" icon={faXTwitter} />
                   </Link>
                 )}
-                {!!app.url_discord && (
-                  <Link to={app.url_discord} target="_blank">
+                {!!product.url_discord && (
+                  <Link to={product.url_discord} target="_blank">
                     <FontAwesomeIcon className="share-icon" icon={faDiscord} />
                   </Link>
                 )}
-                {!!app.url_fb && (
-                  <Link to={app.url_fb} target="_blank">
+                {!!product.url_fb && (
+                  <Link to={product.url_fb} target="_blank">
                     <FontAwesomeIcon
                       className="share-icon"
                       icon={faFacebookF}
                     />
                   </Link>
                 )}
-                {!!app.url_linkedin && (
-                  <Link to={app.url_linkedin} target="_blank">
+                {!!product.url_linkedin && (
+                  <Link to={product.url_linkedin} target="_blank">
                     <FontAwesomeIcon
                       className="share-icon"
                       icon={faLinkedinIn}
                     />
                   </Link>
                 )}
-                {!!app['e-mail'] && (
-                  <Link to={`mailto:${app['e-mail']}`} target="_blank">
+                {!!product['e-mail'] && (
+                  <Link to={`mailto:${product['e-mail']}`} target="_blank">
                     <FontAwesomeIcon className="share-icon" icon={faEnvelope} />
                   </Link>
                 )}
-                {!!app.url && (
-                  <Link to={app.url} target="_blank">
+                {!!product.url && (
+                  <Link to={product.url} target="_blank">
                     <FontAwesomeIcon className="share-icon" icon={faLink} />
                   </Link>
                 )}
@@ -1294,15 +1330,15 @@ export const AppView = () => {
           </div>
           <div className="container-details container-badges">
             <h2 className="no-margin">Version & release</h2>
-            {app.developer && (
+            {product.developer && (
               <div className="container-tags">
                 <div className="badges">
                   <p>Developer: </p>
                   <div>
-                    <Link to={app.developer_url} target="_blank">
+                    <Link to={product.developer_url} target="_blank">
                       <Button
                         secondary
-                        label={app.developer}
+                        label={product.developer}
                         size="small"
                         icon={
                           <FontAwesomeIcon
@@ -1316,55 +1352,58 @@ export const AppView = () => {
                 </div>
               </div>
             )}
-            {app.released && (
+            {product.released && (
               <div className="container-tags">
                 <div className="badges">
                   <p>Released: </p>
-                  <div>{getDateFromTimestamp(app.released)}</div>
+                  <div>{getDateFromTimestamp(product.released)}</div>
                 </div>
               </div>
             )}
-            {appAppStoreScraper.updated && (
+            {productProductStoreScraper.updated && (
               <div className="container-tags">
                 <div className="badges">
                   <p>Updated: </p>
-                  <div>{getDateFromTimestamp(appAppStoreScraper.updated)}</div>
-                </div>
-              </div>
-            )}
-            {appAppStore.version && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Current version: </p>
-                  <div>{appAppStore.version}</div>
-                </div>
-              </div>
-            )}
-            {appAppStore.fileSizeBytes && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Size: </p>
                   <div>
-                    {`${(appAppStore.fileSizeBytes / (1024 * 1024)).toFixed(
-                      2,
-                    )} MB`}
+                    {getDateFromTimestamp(productProductStoreScraper.updated)}
                   </div>
                 </div>
               </div>
             )}
-            {appAppStore.minimumOsVersion && (
+            {productProductStore.version && (
               <div className="container-tags">
                 <div className="badges">
-                  <p>Minimum iOS version: </p>
-                  <div>{appAppStore.minimumOsVersion}</div>
+                  <p>Current version: </p>
+                  <div>{productProductStore.version}</div>
                 </div>
               </div>
             )}
-            {appAppStore.trackContentRating && (
+            {productProductStore.fileSizeBytes && (
+              <div className="container-tags">
+                <div className="badges">
+                  <p>Size: </p>
+                  <div>
+                    {`${(
+                      productProductStore.fileSizeBytes /
+                      (1024 * 1024)
+                    ).toFixed(2)} MB`}
+                  </div>
+                </div>
+              </div>
+            )}
+            {productProductStore.minimumOsVersion && (
+              <div className="container-tags">
+                <div className="badges">
+                  <p>Minimum iOS version: </p>
+                  <div>{productProductStore.minimumOsVersion}</div>
+                </div>
+              </div>
+            )}
+            {productProductStore.trackContentRating && (
               <div className="container-tags">
                 <div className="badges">
                   <p>Content rating: </p>
-                  <div>{appAppStore.trackContentRating}</div>
+                  <div>{productProductStore.trackContentRating}</div>
                 </div>
               </div>
             )}
@@ -1376,12 +1415,12 @@ export const AppView = () => {
                 <p>Category: </p>
                 <div>
                   <Link
-                    to={`/apps/categories/${app.categorySlug}`}
+                    to={`/products/categories/${product.categorySlug}`}
                     target="_blank"
                   >
                     <Button
                       secondary
-                      label={app.categoryTitle?.toLowerCase()}
+                      label={product.categoryTitle?.toLowerCase()}
                       size="small"
                       icon={
                         <FontAwesomeIcon
@@ -1414,7 +1453,7 @@ export const AppView = () => {
                   <p className="p-no-margin">Tags: </p>
                   <div className="badges-keywords">
                     {tags.map((tag) => (
-                      <Link to={`../apps/tags/${tag.slug}`}>
+                      <Link to={`../products/tags/${tag.slug}`}>
                         <Button
                           secondary
                           label={tag.title.toLowerCase()}
@@ -1435,7 +1474,7 @@ export const AppView = () => {
                   <p className="p-no-margin">Features: </p>
                   <div className="badges-keywords">
                     {features.map((tag) => (
-                      <Link to={`../apps/features/${tag.slug}`}>
+                      <Link to={`../products/features/${tag.slug}`}>
                         <Button
                           secondary
                           label={tag.title.toLowerCase()}
@@ -1454,7 +1493,7 @@ export const AppView = () => {
                   <p className="p-no-margin">Use cases: </p>
                   <div className="badges-keywords">
                     {useCases.map((tag) => (
-                      <Link to={`../apps/useCases/${tag.slug}`}>
+                      <Link to={`../products/useCases/${tag.slug}`}>
                         <Button
                           secondary
                           label={tag.title.toLowerCase()}
@@ -1476,7 +1515,7 @@ export const AppView = () => {
                   <p className="p-no-margin">Best for: </p>
                   <div className="badges-keywords">
                     {userTypes.map((tag) => (
-                      <Link to={`../apps/userTypes/${tag.slug}`}>
+                      <Link to={`../products/userTypes/${tag.slug}`}>
                         <Button
                           secondary
                           label={tag.title.toLowerCase()}
@@ -1494,7 +1533,7 @@ export const AppView = () => {
                   <p className="p-no-margin">Industries: </p>
                   <div className="badges-keywords">
                     {industries.map((tag) => (
-                      <Link to={`../apps/industries/${tag.slug}`}>
+                      <Link to={`../products/industries/${tag.slug}`}>
                         <Button
                           secondary
                           label={tag.title.toLowerCase()}
@@ -1513,7 +1552,7 @@ export const AppView = () => {
                   <p className="p-no-margin">Business models: </p>
                   <div className="badges-keywords">
                     {businessModels.map((tag) => (
-                      <Link to={`../apps/businessModels/${tag.slug}`}>
+                      <Link to={`../products/businessModels/${tag.slug}`}>
                         <Button
                           secondary
                           label={tag.title.toLowerCase()}
@@ -1526,21 +1565,21 @@ export const AppView = () => {
               </div>
             )}
           </div>
-          {app.languages && (
+          {product.languages && (
             <div className="container-details container-badges">
               <h2 className="no-margin">Languages</h2>
-              {JSON.parse(app.languages).join(', ')}
+              {JSON.parse(product.languages).join(', ')}
             </div>
           )}
-          {(!!app.is_ai_powered || !!app.is_open_source) && (
+          {(!!product.is_ai_powered || !!product.is_open_source) && (
             <div className="container-details container-badges">
               <h2 className="no-margin">Other</h2>
 
               <div className="container-tags">
                 <div className="badges">
                   <div>
-                    {!!app.is_ai_powered && (
-                      <Link to="../apps/other/ai" target="_blank">
+                    {!!product.is_ai_powered && (
+                      <Link to="../products/other/ai" target="_blank">
                         <Button
                           secondary
                           label="AI powered"
@@ -1554,8 +1593,8 @@ export const AppView = () => {
                         />
                       </Link>
                     )}
-                    {!!app.is_open_source && (
-                      <Link to="../apps/other/open-source" target="_blank">
+                    {!!product.is_open_source && (
+                      <Link to="../products/other/open-source" target="_blank">
                         <Button
                           secondary
                           label="open source"
@@ -1575,27 +1614,28 @@ export const AppView = () => {
             </div>
           )}
 
-          {app.appUrlAppStore || app.appUrlGooglePlayStore ? (
+          {product.productUrlProductStore ||
+          product.productUrlGooglePlayStore ? (
             <div className="container-appview-box">
-              <h2>Download {app.appTitle} app</h2>
+              <h2>Download {product.productTitle} product</h2>
               <div className="container-store-logos">
-                {app.appUrlAppStore && (
+                {product.productUrlProductStore && (
                   <Link
                     target="_blank"
-                    to={app.appUrlAppStore}
+                    to={product.productUrlProductStore}
                     className="simple-link"
                   >
                     <img
-                      src={appStoreLogo}
-                      alt="App Store logo"
+                      src={productStoreLogo}
+                      alt="Product Store logo"
                       className="logo-store"
                     />
                   </Link>
                 )}
-                {app.appUrlGooglePlayStore && (
+                {product.productUrlGooglePlayStore && (
                   <Link
                     target="_blank"
-                    to={app.appUrlGooglePlayStore}
+                    to={product.productUrlGooglePlayStore}
                     className="simple-link"
                   >
                     <img
@@ -1611,15 +1651,15 @@ export const AppView = () => {
             ''
           )}
 
-          {app.contact && (
+          {product.contact && (
             <div className="container-appview-box">
-              <h2>{app.title} support</h2>
+              <h2>{product.title} support</h2>
               <div>
-                <Link to={`mailto:${app.contact}`} target="_blank">
+                <Link to={`mailto:${product.contact}`} target="_blank">
                   <Button
                     secondary
                     icon={<FontAwesomeIcon icon={faEnvelope} size="sm" />}
-                    label={`Contact ${app.appTitle} support`}
+                    label={`Contact ${product.productTitle} support`}
                   />
                 </Link>
               </div>
@@ -1629,40 +1669,42 @@ export const AppView = () => {
             <h3>Related searches</h3>
             <div className="topics-div searches">
               {searches.map((search) => (
-                <Link to={`/apps/search/${search.id}`} target="_blank">
+                <Link to={`/products/search/${search.id}`} target="_blank">
                   <Button secondary label={search.title} />
                 </Link>
               ))}
             </div>
           </div> */}
-          <div className="icons-apps-page">
+          <div className="icons-products-page">
             <span>Share it: </span>
             <FontAwesomeIcon
               icon={faLink}
               className="button-copy"
               onClick={() =>
-                copyToClipboard(`https://www.trytopapps.com/apps/${app.slug}`)
+                copyToClipboard(
+                  `https://www.trytopproducts.com/products/${product.slug}`,
+                )
               }
             />
-            <FacebookShareButton url={`/apps/${app.slug}`}>
+            <FacebookShareButton url={`/products/${product.slug}`}>
               <FontAwesomeIcon className="share-icon" icon={faFacebookF} />
             </FacebookShareButton>
             <TwitterShareButton
-              url={`https://www.trytopapps.com/apps/${app.slug}`}
-              title={`Check out this app: '${app.title}'`}
-              hashtags={['Apps']}
+              url={`https://www.trytopproducts.com/products/${product.slug}`}
+              title={`Check out this product: '${product.title}'`}
+              hashtags={['Products']}
             >
               <FontAwesomeIcon className="share-icon" icon={faTwitter} />
             </TwitterShareButton>
             <LinkedinShareButton
-              url={`https://www.trytopapps.com/apps/${app.slug}`}
+              url={`https://www.trytopproducts.com/products/${product.slug}`}
             >
               <FontAwesomeIcon className="share-icon" icon={faLinkedinIn} />
             </LinkedinShareButton>
             <EmailShareButton
-              subject="Check out this app!"
-              body={`This app is great: '${app.title}'`}
-              url={`https://www.trytopapps.com/apps/${app.slug}`}
+              subject="Check out this product!"
+              body={`This product is great: '${product.title}'`}
+              url={`https://www.trytopproducts.com/products/${product.slug}`}
             >
               <FontAwesomeIcon icon={faEnvelope} />
             </EmailShareButton>
@@ -1671,17 +1713,17 @@ export const AppView = () => {
             </Toast>
           </div>
           {/* <ContainerCta user={user} /> */}
-          {/* {similarDealsFromApp.length > 0 && (
+          {/* {similarDealsFromProduct.length > 0 && (
             <div className="container-alternatives">
-              <h2>🔎 Other deals from {app.appTitle} app</h2>
+              <h2>🔎 Other deals from {product.productTitle} product</h2>
               <div className="container-cards small-cards">
-                {cardItemsSimilarDealsFromApp}
+                {cardItemsSimilarDealsFromProduct}
               </div>
             </div>
           )} */}
-          {similarApps.length > 0 && (
+          {similarProducts.length > 0 && (
             <div className="container-alternatives">
-              <h2>🔎 Similar apps in {app.categoryTitle}</h2>
+              <h2>🔎 Similar products in {product.categoryTitle}</h2>
               <div className="container-cards small-cards">{cardItems}</div>
             </div>
           )}
