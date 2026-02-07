@@ -6,17 +6,17 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 
 // controllers
-const businessModelsController = require('../controllers/businessModels.controller');
+const occasionsController = require('../controllers/occasions.controller');
 
 router.get('/', (req, res, next) => {
   if (req.query.app) {
-    businessModelsController
-      .getBusinessModelsByApp(req.query.app)
+    occasionsController
+      .getOccasionsByApp(req.query.app)
       .then((result) => res.json(result))
       .catch(next);
   } else {
-    businessModelsController
-      .getBusinessModels()
+    occasionsController
+      .getOccasions()
       .then((result) => res.json(result))
       .catch(next);
   }

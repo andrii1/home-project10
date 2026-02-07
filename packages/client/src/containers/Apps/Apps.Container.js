@@ -56,14 +56,14 @@ export const Apps = () => {
   const [tags, setTags] = useState([]);
   const [features, setFeatures] = useState([]);
   const [userTypes, setUserTypes] = useState([]);
-  const [businessModels, setBusinessModels] = useState([]);
+  const [occasions, setOccasions] = useState([]);
   const [useCases, setUseCases] = useState([]);
   const [industries, setIndustries] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [filteredTags, setFilteredTags] = useState([]);
   const [filteredFeatures, setFilteredFeatures] = useState([]);
   const [filteredUserTypes, setFilteredUserTypes] = useState([]);
-  const [filteredBusinessModels, setFilteredBusinessModels] = useState([]);
+  const [filteredOccasions, setFilteredOccasions] = useState([]);
   const [filteredUseCases, setFilteredUseCases] = useState([]);
   const [filteredIndustries, setFilteredIndustries] = useState([]);
   const [filteredPricing, setFilteredPricing] = useState([]);
@@ -123,7 +123,7 @@ export const Apps = () => {
     setFilteredTags(filters.tags || []);
     setFilteredFeatures(filters.features || []);
     setFilteredUserTypes(filters.userTypes || []);
-    setFilteredBusinessModels(filters.businessModels || []);
+    setFilteredOccasions(filters.occasions || []);
     setFilteredUseCases(filters.useCases || []);
     setFilteredIndustries(filters.industries || []);
     setFilteredPricing(filters.pricing || []);
@@ -166,8 +166,8 @@ export const Apps = () => {
     }
 
     // Business models
-    if (filteredBusinessModels.length > 0) {
-      params.append('businessModels', filteredBusinessModels.join(','));
+    if (filteredOccasions.length > 0) {
+      params.append('occasions', filteredOccasions.join(','));
     }
 
     // useCases
@@ -238,7 +238,7 @@ export const Apps = () => {
     filteredOther,
     filteredFeatures,
     filteredUserTypes,
-    filteredBusinessModels,
+    filteredOccasions,
     filteredUseCases,
     filteredIndustries,
     searchParams,
@@ -278,8 +278,8 @@ export const Apps = () => {
     }
 
     // Business models
-    if (filteredBusinessModels.length > 0) {
-      params.append('businessModels', filteredBusinessModels.join(','));
+    if (filteredOccasions.length > 0) {
+      params.append('occasions', filteredOccasions.join(','));
     }
 
     // useCases
@@ -379,7 +379,7 @@ export const Apps = () => {
   //   filteredTags,
   //   filteredFeatures,
   //   filteredUserTypes,
-  //   filteredBusinessModels,
+  //   filteredOccasions,
   //   filteredUseCases,
   //   filteredIndustries,
   //   filteredPlatforms,
@@ -429,11 +429,11 @@ export const Apps = () => {
       setUserTypes(sorted);
     }
 
-    async function fetchBusinessModels() {
-      const response = await fetch(`${apiURL()}/businessModels/`);
+    async function fetchOccasions() {
+      const response = await fetch(`${apiURL()}/occasions/`);
       const data = await response.json();
       const sorted = data.sort((a, b) => a.title.localeCompare(b.title));
-      setBusinessModels(sorted);
+      setOccasions(sorted);
     }
 
     async function fetchUseCases() {
@@ -454,7 +454,7 @@ export const Apps = () => {
     fetchTags();
     fetchFeatures();
     fetchUserTypes();
-    fetchBusinessModels();
+    fetchOccasions();
     fetchUseCases();
     fetchIndustries();
   }, []);
@@ -523,9 +523,9 @@ export const Apps = () => {
   //       currentValues = filteredUserTypes;
   //       setter = setFilteredUserTypes;
   //       break;
-  //     case 'businessModels':
-  //       currentValues = filteredBusinessModels;
-  //       setter = setFilteredBusinessModels;
+  //     case 'occasions':
+  //       currentValues = filteredOccasions;
+  //       setter = setFilteredOccasions;
   //       break;
   //     case 'useCases':
   //       currentValues = filteredUseCases;
@@ -571,8 +571,8 @@ export const Apps = () => {
   //     tags: type === 'tags' ? newValues : filteredTags,
   //     features: type === 'features' ? newValues : filteredFeatures,
   //     userTypes: type === 'userTypes' ? newValues : filteredUserTypes,
-  //     businessModels:
-  //       type === 'businessModels' ? newValues : filteredBusinessModels,
+  //     occasions:
+  //       type === 'occasions' ? newValues : filteredOccasions,
   //     useCases: type === 'useCases' ? newValues : filteredUseCases,
   //     industries: type === 'industries' ? newValues : filteredIndustries,
   //     pricing: type === 'pricing' ? newValues : filteredPricing,
@@ -600,7 +600,7 @@ export const Apps = () => {
     setFilteredTags([]);
     setFilteredFeatures([]);
     setFilteredUserTypes([]);
-    setFilteredBusinessModels([]);
+    setFilteredOccasions([]);
     setFilteredUseCases([]);
     setFilteredIndustries([]);
     setFilteredPricing([]);
@@ -842,7 +842,7 @@ export const Apps = () => {
     filteredTags.length > 0 ||
     filteredFeatures.length > 0 ||
     filteredUserTypes.length > 0 ||
-    filteredBusinessModels.length > 0 ||
+    filteredOccasions.length > 0 ||
     filteredUseCases.length > 0 ||
     filteredIndustries.length > 0 ||
     filteredPricing.length > 0 ||
@@ -881,11 +881,11 @@ export const Apps = () => {
       options: userTypes,
     },
     {
-      key: 'businessModels',
+      key: 'occasions',
       label: 'Business Models',
-      values: filteredBusinessModels,
-      setter: setFilteredBusinessModels,
-      options: businessModels,
+      values: filteredOccasions,
+      setter: setFilteredOccasions,
+      options: occasions,
     },
     {
       key: 'useCases',
@@ -1134,13 +1134,13 @@ export const Apps = () => {
               />
               <h3>Business Models</h3>
               <MultiSelectDropdown
-                options={businessModels}
-                selected={filteredBusinessModels}
+                options={occasions}
+                selected={filteredOccasions}
                 onChange={filterHandler}
                 placeholder="Select business models"
                 valueKey="slug"
                 labelKey="title"
-                title="businessModels"
+                title="occasions"
               />
               <h3>Use cases</h3>
               <MultiSelectDropdown
