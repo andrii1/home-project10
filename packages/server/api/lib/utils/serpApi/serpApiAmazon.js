@@ -44,7 +44,7 @@ const amazonCategories = [
   // { title: 'Beauty', nodeId: '11055981' },
   // { title: 'Books', nodeId: '1000' },
   // { title: 'Collectibles & Fine Arts', nodeId: '4991426011' },
-  { title: 'Electronics', nodeId: '493964' },
+  // { title: 'Electronics', nodeId: '493964' },
   // { title: 'Clothing, Shoes & Jewelry', nodeId: '7141124011' },
   // { title: 'Gift Cards', nodeId: '2864120011' },
   // { title: 'Grocery & Gourmet Food', nodeId: '16310211' },
@@ -62,7 +62,7 @@ const amazonCategories = [
   // { title: 'CDs & Vinyl', nodeId: '301668' },
   // { title: 'Musical Instruments', nodeId: '11965861' },
   // { title: 'Office Products', nodeId: '1084128' },
-  // { title: 'Computers', nodeId: '541966' },
+  { title: 'Computers', nodeId: '541966' },
   // { title: 'Pet Supplies', nodeId: '2619534011' },
   // { title: 'Software', nodeId: '409488' },
   // { title: 'Sports & Outdoors', nodeId: '3375301' },
@@ -73,6 +73,26 @@ const amazonCategories = [
   // { title: 'Wine', nodeId: '2983386011' },
   // { title: 'Cell Phones & Accessories', nodeId: '2335753011' },
 ];
+
+function extractAmazonRawProducts(data) {
+  const keywords = ['best_sellers', 'featured', 'deals', 'organic_results'];
+
+  const collected = [];
+
+  for (const [key, value] of Object.entries(data)) {
+    if (!Array.isArray(value)) continue;
+
+    const matchesKeyword = keywords.some((keyword) =>
+      key.toLowerCase().includes(keyword),
+    );
+
+    if (matchesKeyword) {
+      collected.push(...value);
+    }
+  }
+
+  return collected;
+}
 
 function extractAmazonProducts(data) {
   if (data.error) {
@@ -85,13 +105,7 @@ function extractAmazonProducts(data) {
     return [];
   }
 
-  const rawProducts =
-    data.best_sellers ||
-    data.featured_products ||
-    data.less_than_20_deals ||
-    data.shop_featured_products ||
-    data.organic_results ||
-    [];
+  const rawProducts = extractAmazonRawProducts(data);
 
   return rawProducts.map((item) => ({
     asin: item.asin,
