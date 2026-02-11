@@ -2,19 +2,23 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable import/no-extraneous-dependencies */
+const fetchSerpApiAmazon = require('../serpApiAmazon');
+
 require('dotenv').config();
 
 // Credentials (from .env)
 const USER_UID = process.env.USER_UID_APPS_PROD;
 const API_PATH = process.env.API_PATH_APPS_PROD;
 
-// const today = new Date();
-// const isSunday = today.getDay() === 0; // 0 = Sunday
+const today = new Date();
+const todayDay = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-// if (!isSunday) {
-//   console.log('Not Sunday, skipping weekly job.');
-//   process.exit(0);
-// }
+const allowedDays = [0, 3, 5];
+
+if (!allowedDays.includes(todayDay)) {
+  console.log('Not an allowed day, skipping job.');
+  process.exit(0);
+}
 
 // fetch helpers
 
@@ -25,14 +29,14 @@ async function fetchAppByAppleId(appleId) {
   return data.results[0];
 }
 
-async function insertCategory(title, categoryAppleId) {
+async function insertCategory(title, categoryNodeId) {
   const res = await fetch(`${API_PATH}/categories`, {
     method: 'POST',
     headers: {
       token: `token ${USER_UID}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ title, category_apple_id: categoryAppleId }),
+    body: JSON.stringify({ title, nodeId: categoryNodeId }),
   });
   const data = await res.json();
   return data; // assume it returns { id, full_name }
@@ -65,7 +69,11 @@ async function insertApp({ appTitle, appleId, appUrl, categoryId }) {
 
 const insertApps = async (appsParam) => {
   // console.log(appsParam);
-  for (const appItem of appsParam) {
+  let products;
+  if (allowedDays.includes(todayDay)) {
+    products = await fetchSerpApiAmazon();
+  }
+  for (const appItem of products) {
     try {
       const appleId = appItem.id;
 

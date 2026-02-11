@@ -83,10 +83,10 @@ async function fetchSerpApiAmazon(categoryId, domain = 'amazon.com') {
   }
 }
 
-const useAmazon = async (categories) => {
+const useAmazon = async () => {
   const allProducts = [];
 
-  for (const category of categories) {
+  for (const category of amazonCategories) {
     const products = await fetchSerpApiAmazon(category.id);
     allProducts.push(...products);
   }
@@ -95,5 +95,5 @@ const useAmazon = async (categories) => {
   return allProducts;
 };
 
-useAmazon(amazonCategories).catch(console.error);
+useAmazon().catch(console.error);
 module.exports = useAmazon;
