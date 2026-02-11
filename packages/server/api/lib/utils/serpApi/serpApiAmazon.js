@@ -37,14 +37,14 @@ const excludeList = [
 ];
 
 const amazonCategories = [
-  { title: 'Appliances', nodeId: '2619526011' },
+  // { title: 'Appliances', nodeId: '2619526011' },
   // { title: 'Arts, Crafts & Sewing', nodeId: '2617942011' },
   // { title: 'Automotive', nodeId: '15690151' },
   // { title: 'Baby', nodeId: '165797011' },
   // { title: 'Beauty', nodeId: '11055981' },
   // { title: 'Books', nodeId: '1000' },
   // { title: 'Collectibles & Fine Arts', nodeId: '4991426011' },
-  // { title: 'Electronics', nodeId: '493964' },
+  { title: 'Electronics', nodeId: '493964' },
   // { title: 'Clothing, Shoes & Jewelry', nodeId: '7141124011' },
   // { title: 'Gift Cards', nodeId: '2864120011' },
   // { title: 'Grocery & Gourmet Food', nodeId: '16310211' },
@@ -89,6 +89,7 @@ function extractAmazonProducts(data) {
     data.best_sellers ||
     data.featured_products ||
     data.less_than_20_deals ||
+    data.shop_featured_products ||
     data.organic_results ||
     [];
 
@@ -123,7 +124,7 @@ async function fetchSerpApiAmazon(categoryId, domain = 'amazon.com') {
 
     const products = extractAmazonProducts(data);
 
-    console.log(products);
+    console.log('products1', products);
     return products;
   } catch (error) {
     console.error('Error fetching Amazon best sellers:', error);
