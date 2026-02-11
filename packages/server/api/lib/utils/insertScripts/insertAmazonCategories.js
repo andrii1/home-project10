@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 require('dotenv').config();
-const knex = require('../../../config/db');
+const knex = require('../../../../config/db');
 
 const categories = [
   { title: 'Appliances', nodeId: '2619526011' },
