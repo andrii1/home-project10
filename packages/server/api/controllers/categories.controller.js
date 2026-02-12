@@ -50,7 +50,7 @@ const createCategory = async (token, body) => {
 
     // Optional: check for existing category
     const existing = await knex('categories')
-      .whereRaw('LOWER(title) = ?', [body.title.toLowerCase()])
+      .where({ nodeId: body.nodeId })
       .first();
 
     if (existing) {
@@ -67,12 +67,9 @@ const createCategory = async (token, body) => {
 
     const insertData = {
       title: body.title,
+      nodeId: body.nodeId,
       slug: uniqueSlug,
     };
-
-    if (body.category_apple_id) {
-      insertData.category_apple_id = body.category_apple_id;
-    }
 
     const [categoryId] = await knex('categories').insert(insertData);
 

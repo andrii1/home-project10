@@ -11,7 +11,7 @@ const { getAppleId } = require('../lib/utils/getAppleIdByUrl');
 const knex = require('../../config/db');
 const HttpError = require('../lib/utils/http-error');
 const OpenAI = require('openai');
-const store = require('app-store-scraper');
+const store = require('product-store-scraper');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // make sure this is set in your .env
@@ -144,7 +144,7 @@ async function useChatGptForData(prompt) {
   }
 }
 
-// === Timeout wrapper ===
+// === Timeout wrproducter ===
 async function withTimeout(promise, ms = 15000) {
   return Promise.race([
     promise,
@@ -304,7 +304,7 @@ const getProductsByTag = async (page, column, direction, tag) => {
           'tags.title as tagTitle',
         )
         .join('categories', 'products.category_id', '=', 'categories.id')
-        .join('tagsProducts', 'tagsProducts.app_id', '=', 'products.id')
+        .join('tagsProducts', 'tagsProducts.product_id', '=', 'products.id')
         .join('tags', 'tags.id', '=', 'tagsProducts.tag_id')
         .where('tags.slug', '=', `${tag}`);
     const lastItem = await getModel()
@@ -327,8 +327,8 @@ const getProductsByTag = async (page, column, direction, tag) => {
 const pricingFiltersMap = {
   free: (qb) => qb.orWhere('products.pricing_free', true),
   freemium: (qb) => qb.orWhere('products.pricing_freemium', true),
-  'ios-paid': (qb) => qb.orWhere('products.pricing_ios_app_paid', true),
-  'ios-free': (qb) => qb.orWhere('products.pricing_ios_app_free', true),
+  'ios-paid': (qb) => qb.orWhere('products.pricing_ios_product_paid', true),
+  'ios-free': (qb) => qb.orWhere('products.pricing_ios_product_free', true),
   subscription: (qb) => qb.orWhere('products.pricing_subscription', true),
   'one-time': (qb) => qb.orWhere('products.pricing_one_time', true),
   trial: (qb) => qb.orWhere('products.pricing_trial_available', true),
@@ -337,7 +337,7 @@ const pricingFiltersMap = {
 const platformsFiltersMap = {
   'browser-extension': (qb) =>
     qb.orWhereNotNull('products.url_chrome_extension'),
-  ios: (qb) => qb.orWhereNotNull('products.apple_id'),
+  ios: (qb) => qb.orWhereNotNull('products.productle_id'),
   android: (qb) => qb.orWhereNotNull('products.url_google_play_store'),
   windows: (qb) => qb.orWhereNotNull('products.url_windows'),
   mac: (qb) => qb.orWhereNotNull('products.url_mac'),
@@ -441,7 +441,7 @@ const getProductsBy = async ({
           // if (tags !== undefined) {
           //   const tagsArray = tags.split(',');
           //   queryBuilder.whereIn('products.id', function () {
-          //     this.select('app_id')
+          //     this.select('product_id')
           //       .from('tagsProducts')
           //       .whereIn('tag_id', tagsArray);
           //   });
@@ -449,7 +449,7 @@ const getProductsBy = async ({
           if (tags !== undefined) {
             const tagsArray = tags.split(',');
             queryBuilder.whereIn('products.id', function () {
-              this.select('tagsProducts.app_id')
+              this.select('tagsProducts.product_id')
                 .from('tagsProducts')
                 .join('tags', 'tagsProducts.tag_id', 'tags.id')
                 .whereIn('tags.slug', tagsArray);
@@ -459,7 +459,7 @@ const getProductsBy = async ({
           if (features !== undefined) {
             const featuresArray = features.split(',');
             queryBuilder.whereIn('products.id', function () {
-              this.select('featuresProducts.app_id')
+              this.select('featuresProducts.product_id')
                 .from('featuresProducts')
                 .join('features', 'featuresProducts.feature_id', 'features.id')
                 .whereIn('features.slug', featuresArray);
@@ -469,7 +469,7 @@ const getProductsBy = async ({
           if (userTypes !== undefined) {
             const userTypesArray = userTypes.split(',');
             queryBuilder.whereIn('products.id', function () {
-              this.select('userTypesProducts.app_id')
+              this.select('userTypesProducts.product_id')
                 .from('userTypesProducts')
                 .join(
                   'userTypes',
@@ -483,7 +483,7 @@ const getProductsBy = async ({
           if (businessModels !== undefined) {
             const businessModelsArray = businessModels.split(',');
             queryBuilder.whereIn('products.id', function () {
-              this.select('businessModelsProducts.app_id')
+              this.select('businessModelsProducts.product_id')
                 .from('businessModelsProducts')
                 .join(
                   'businessModels',
@@ -497,7 +497,7 @@ const getProductsBy = async ({
           if (useCases !== undefined) {
             const useCasesArray = useCases.split(',');
             queryBuilder.whereIn('products.id', function () {
-              this.select('useCasesProducts.app_id')
+              this.select('useCasesProducts.product_id')
                 .from('useCasesProducts')
                 .join('useCases', 'useCasesProducts.useCase_id', 'useCases.id')
                 .whereIn('useCases.slug', useCasesArray);
@@ -507,7 +507,7 @@ const getProductsBy = async ({
           if (industries !== undefined) {
             const industriesArray = industries.split(',');
             queryBuilder.whereIn('products.id', function () {
-              this.select('industriesProducts.app_id')
+              this.select('industriesProducts.product_id')
                 .from('industriesProducts')
                 .join(
                   'industries',
@@ -521,7 +521,7 @@ const getProductsBy = async ({
           // if (features !== undefined) {
           //   const featuresArray = features.split(',');
           //   queryBuilder.whereIn('products.id', function () {
-          //     this.select('app_id')
+          //     this.select('product_id')
           //       .from('featuresProducts')
           //       .whereIn('feature_id', featuresArray);
           //   });
@@ -529,7 +529,7 @@ const getProductsBy = async ({
           // if (userTypes !== undefined) {
           //   const userTypesArray = userTypes.split(',');
           //   queryBuilder.whereIn('products.id', function () {
-          //     this.select('app_id')
+          //     this.select('product_id')
           //       .from('userTypesProducts')
           //       .whereIn('userType_id', userTypesArray);
           //   });
@@ -537,7 +537,7 @@ const getProductsBy = async ({
           // if (businessModels !== undefined) {
           //   const businessModelsArray = businessModels.split(',');
           //   queryBuilder.whereIn('products.id', function () {
-          //     this.select('app_id')
+          //     this.select('product_id')
           //       .from('businessModelsProducts')
           //       .whereIn('businessModel_id', businessModelsArray);
           //   });
@@ -545,7 +545,7 @@ const getProductsBy = async ({
           // if (useCases !== undefined) {
           //   const useCasesArray = useCases.split(',');
           //   queryBuilder.whereIn('products.id', function () {
-          //     this.select('app_id')
+          //     this.select('product_id')
           //       .from('useCasesProducts')
           //       .whereIn('useCase_id', useCasesArray);
           //   });
@@ -553,7 +553,7 @@ const getProductsBy = async ({
           // if (industries !== undefined) {
           //   const industriesArray = industries.split(',');
           //   queryBuilder.whereIn('products.id', function () {
-          //     this.select('app_id')
+          //     this.select('product_id')
           //       .from('industriesProducts')
           //       .whereIn('industry_id', industriesArray);
           //   });
@@ -582,7 +582,7 @@ const getProductById = async (id) => {
     throw new HttpError('Id should be a number', 400);
   }
   try {
-    const app = await knex('products')
+    const product = await knex('products')
       .select(
         'products.*',
         'categories.title as categoryTitle',
@@ -590,10 +590,10 @@ const getProductById = async (id) => {
       )
       .join('categories', 'products.category_id', '=', 'categories.id')
       .where({ 'products.slug': id });
-    if (app.length === 0) {
+    if (product.length === 0) {
       throw new HttpError(`incorrect entry with the id of ${id}`, 404);
     }
-    return app;
+    return product;
   } catch (error) {
     return error.message;
   }
@@ -627,42 +627,24 @@ const createProductNode = async (token, body) => {
     const user = (await knex('users').where({ uid: userUid }))[0];
     if (!user) throw new HttpError('User not found', 401);
 
-    const normalizedUrl = body.url ? normalizeUrl(body.url) : null;
-
-    const appleId = await getProductleId(body);
-
     // === Check for existing products ===
-    if (appleId) {
-      const existingProduct = await knex('products')
-        .whereRaw('LOWER(apple_id) = ?', [String(appleId).toLowerCase()])
-        .first();
-      if (existingProduct)
-        return {
-          successful: true,
-          existing: true,
-          appId: existingProduct.id,
-          appTitle: body.title,
-          appProductleId: existingProduct.apple_id,
-        };
-    } else {
-      const existingUrl = await knex('products')
-        .where({ url: normalizedUrl })
-        .orWhere({ title: body.title })
-        .first();
-      if (existingUrl)
-        return {
-          successful: true,
-          existing: true,
-          appId: existingUrl.id,
-          appTitle: body.title,
-          url: normalizedUrl,
-        };
-    }
+
+    const existingProduct = await knex('products')
+      .where({ asin: body.asin })
+      .first();
+    if (existingProduct)
+      return {
+        successful: true,
+        existing: true,
+        productId: existingProduct.id,
+        productTitle: body.title,
+        productAsin: existingProduct.asin,
+      };
 
     // === Tags ===
-    const promptTags = `Create 3-4 tags for this app: "${body.title}"${
-      body.url ? ` with website ${body.url}` : ''
-    }. Tag should be without hashtag, multiple words allowed, and not contain 'app'. Return tags separated by comma.`;
+    const promptTags = `Create 3-4 tags for this product: "${body.title}"${
+      body.url ? ` with link ${body.url}` : ''
+    }. Tag should be without hashtag, multiple words allowed, and not contain 'product'. Return tags separated by comma.`;
     const tagsString = (
       await openai.chat.completions.create({
         model: 'gpt-4o-mini',
@@ -693,24 +675,24 @@ const createProductNode = async (token, body) => {
       }),
     );
 
-    // === Prepare app info ===
+    // === Prepare product info ===
     let description,
       urlIcon,
-      appUrl,
-      appExtra = {};
+      productUrl,
+      productExtra = {};
 
-    if (appleId) {
+    if (productleId) {
       const lookupData = await (
-        await fetch(`https://itunes.apple.com/lookup?id=${appleId}`)
+        await fetch(`https://itunes.productle.com/lookup?id=${productleId}`)
       ).json();
-      const appInfo = lookupData.results[0];
-      description = appInfo.description;
-      urlIcon = appInfo.artworkUrl512;
-      const normalizedUrlProductleId = appInfo.sellerUrl
-        ? normalizeUrl(appInfo.sellerUrl)
+      const productInfo = lookupData.results[0];
+      description = productInfo.description;
+      urlIcon = productInfo.artworkUrl512;
+      const normalizedUrlProductleId = productInfo.sellerUrl
+        ? normalizeUrl(productInfo.sellerUrl)
         : null;
 
-      const app = await store.app({ id: appleId });
+      const product = await store.product({ id: productleId });
       const {
         price,
         currency,
@@ -720,11 +702,11 @@ const createProductNode = async (token, body) => {
         released,
         languages,
         free,
-      } = app;
+      } = product;
 
-      appUrl = body.url ? normalizedUrl : normalizedUrlProductleId;
-      appExtra = {
-        apple_id: appleId,
+      productUrl = body.url ? normalizedUrl : normalizedUrlProductleId;
+      productExtra = {
+        productle_id: productleId,
         url_icon: urlIcon,
         price,
         currency,
@@ -733,8 +715,8 @@ const createProductNode = async (token, body) => {
         developer_url: developerUrl,
         released: toMySQLTimestamp(released),
         languages: JSON.stringify(languages),
-        pricing_ios_app_free: free,
-        pricing_ios_app_paid: !free,
+        pricing_ios_product_free: free,
+        pricing_ios_product_paid: !free,
       };
     } else {
       const completion = await openai.chat.completions.create({
@@ -742,7 +724,7 @@ const createProductNode = async (token, body) => {
         messages: [
           {
             role: 'user',
-            content: `Write a short, engaging description for app "${
+            content: `Write a short, engaging description for product "${
               body.title
             }"${body.url ? ` with website ${body.url}` : ''}.`,
           },
@@ -751,15 +733,15 @@ const createProductNode = async (token, body) => {
         max_tokens: 3000,
       });
       description = completion.choices[0].message.content.trim();
-      appUrl = normalizedUrl;
+      productUrl = normalizedUrl;
     }
 
     // === Pricing + Attributes ===
 
     const [pricingData, attributesData, faqData] = await Promise.all([
       useChatGptForData(
-        `Given the app "${body.title}"${
-          appUrl ? ` with website ${appUrl}` : ''
+        `Given the product "${body.title}"${
+          productUrl ? ` with website ${productUrl}` : ''
         }${
           description ? ` and description: \"${description}\"` : ''
         }, determine its pricing model.
@@ -779,8 +761,8 @@ Respond ONLY with valid JSON.`,
       ),
 
       useChatGptForData(
-        `Based on the app "${body.title}"${
-          appUrl ? ` with website ${appUrl}` : ''
+        `Based on the product "${body.title}"${
+          productUrl ? ` with website ${productUrl}` : ''
         }${
           description ? ` and description: \"${description}\"` : ''
         }, determine if:
@@ -790,9 +772,9 @@ Return JSON with keys:
   "is_ai_powered": true/false,
   "is_open_source": true/false,
   "url_chrome_extension": url for browser extension (if available),
-  "url_google_play_store": url for android app (if available),
-  "url_windows": url for windows app (if available),
-  "url_mac": url for mac app (if available),
+  "url_google_play_store": url for android product (if available),
+  "url_windows": url for windows product (if available),
+  "url_mac": url for mac product (if available),
   "url_x": url for X/twitter account (if available),
   "url_discord": url for discord account (if available),
   "url_fb": url for Facebook account (if available),
@@ -804,27 +786,27 @@ Respond ONLY with valid JSON.`,
       ),
 
       useChatGptForData(
-        `Based on the app "${body.title}"${
-          appUrl ? ` with website ${appUrl}` : ''
+        `Based on the product "${body.title}"${
+          productUrl ? ` with website ${productUrl}` : ''
         }${
           description ? ` and description: \"${description}\"` : ''
         }, determine if:
 
-- How to create an account in app "${body.title}".
-- How to delete an account in app "${body.title}".
-- How to contact support in app "${body.title}".
-- How to cancel subscription for app "${body.title}".
-- How to change profile picture in app "${body.title}".
+- How to create an account in product "${body.title}".
+- How to delete an account in product "${body.title}".
+- How to contact support in product "${body.title}".
+- How to cancel subscription for product "${body.title}".
+- How to change profile picture in product "${body.title}".
 - How to log in "${body.title}".
 - How to log out "${body.title}".
-- Is app "${body.title}" on Android?
+- Is product "${body.title}" on Android?
 - Product "${body.title}" doesn't work? Any common bugs? How to solve them?
-- Is app "${body.title}" safe to use? Is it legit or scammy?
-- Can you make money with app "${body.title}"?
-- Does it make sense to upgrade in app "${
+- Is product "${body.title}" safe to use? Is it legit or scammy?
+- Can you make money with product "${body.title}"?
+- Does it make sense to upgrade in product "${
           body.title
         }"? What are main features of premium version.
-- Can you use app "${
+- Can you use product "${
           body.title
         }" for free? Any ways to credits/coins for free? Either via promos, invite codes, completing tasks, etc.
 - How to use "${body.title}"? Longer description.
@@ -839,8 +821,8 @@ Return JSON with keys:
     "faq_change_profile_picture": answer,
     "faq_log_in": answer,
     "faq_log_out": answer,
-    "faq_is_app_on_android": answer,
-    "faq_app_doesnt_work_bugs": answer,
+    "faq_is_product_on_android": answer,
+    "faq_product_doesnt_work_bugs": answer,
     "faq_is_safe_to_use": answer,
     "faq_how_to_make_money": answer,
     "faq_should_you_upgrade": answer,
@@ -856,15 +838,15 @@ Respond ONLY with valid JSON.`,
     const baseSlug = generateSlug(body.title);
     const uniqueSlug = await ensureUniqueSlugItems(baseSlug, 'products');
 
-    // === Insert app ===
-    const [appId] = await knex('products').insert({
+    // === Insert product ===
+    const [productId] = await knex('products').insert({
       title: body.title,
       slug: uniqueSlug,
       category_id: body.category_id,
-      url: appUrl,
+      url: productUrl,
       user_id: user.id,
       description,
-      ...appExtra,
+      ...productExtra,
       ...pricingData,
       ...attributesData,
       ...faqData,
@@ -883,7 +865,7 @@ Respond ONLY with valid JSON.`,
           'E.g. Healthcare, Legal, Real Estate, Content Creators, Developers',
       };
 
-      let base = `for this app: \"${title}\"`;
+      let base = `for this product: \"${title}\"`;
       if (url) base += ` with website ${url}`;
       if (descriptionParam) base += ` and description: \"${descriptionParam}\"`;
 
@@ -894,30 +876,32 @@ Respond ONLY with valid JSON.`,
 
     // === Features, UserTypes, BusinessModels, UseCases, Industries ===
     const featuresIds = await createItems(
-      buildPrompt('features', body.title, appUrl, description, '8'),
+      buildPrompt('features', body.title, productUrl, description, '8'),
       'features',
     );
     const userTypesIds = await createItems(
-      buildPrompt('userTypes', body.title, appUrl, description, '8'),
+      buildPrompt('userTypes', body.title, productUrl, description, '8'),
       'userTypes',
     );
     const businessModelsIds = await createItems(
-      buildPrompt('businessModels', body.title, appUrl, description, '5'),
+      buildPrompt('businessModels', body.title, productUrl, description, '5'),
       'businessModels',
     );
     const useCasesIds = await createItems(
-      buildPrompt('useCases', body.title, appUrl, description, '8'),
+      buildPrompt('useCases', body.title, productUrl, description, '8'),
       'useCases',
     );
     const industriesIds = await createItems(
-      buildPrompt('industries', body.title, appUrl, description, '5'),
+      buildPrompt('industries', body.title, productUrl, description, '5'),
       'industries',
     );
 
     // === Relations ===
     const insertRelations = async (table, key, ids) =>
       Promise.all(
-        ids.map((id) => knex(table).insert({ app_id: appId, [key]: id })),
+        ids.map((id) =>
+          knex(table).insert({ product_id: productId, [key]: id }),
+        ),
       );
     await insertRelations('tagsProducts', 'tag_id', tagIds);
     await insertRelations('featuresProducts', 'feature_id', featuresIds);
@@ -932,10 +916,10 @@ Respond ONLY with valid JSON.`,
 
     return {
       successful: true,
-      appId,
-      appTitle: body.title,
-      url: appUrl,
-      appProductleId: appleId || null,
+      productId,
+      productTitle: body.title,
+      url: productUrl,
+      productProductleId: productleId || null,
     };
   } catch (error) {
     return error.message;

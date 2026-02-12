@@ -114,6 +114,7 @@ function extractAmazonProducts(data) {
     rating: item.rating || null,
     reviews: item.reviews || null,
     url: item.link_clean,
+    url_affiliate: `${item.link_clean}?tag=onlinehikes-20`,
     url_serpapi: item.serpapi_link,
     url_image: item.thumbnail,
   }));

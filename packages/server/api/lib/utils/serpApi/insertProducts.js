@@ -42,7 +42,7 @@ async function insertCategory(title, categoryNodeId) {
   return data; // assume it returns { id, full_name }
 }
 
-async function insertApp({ appTitle, appleId, appUrl, categoryId }) {
+async function insertProduct({ appTitle, appleId, appUrl, categoryId }) {
   const body = {
     title: appTitle,
     category_id: categoryId,
@@ -55,7 +55,7 @@ async function insertApp({ appTitle, appleId, appUrl, categoryId }) {
   if (appUrl) {
     body.url = appUrl;
   }
-  const res = await fetch(`${API_PATH}/apps/node`, {
+  const res = await fetch(`${API_PATH}/products/node`, {
     method: 'POST',
     headers: {
       token: `token ${USER_UID}`,
@@ -84,12 +84,20 @@ const insertProducts = async () => {
       const { categoryId } = newCategory;
       console.log('Inserted category:', newCategory);
 
-      const newApp = await insertApp({ appTitle, appleId, appUrl, categoryId });
-      const { appId } = newApp;
-      const newAppTitle = newApp.appTitle;
-      console.log('Inserted app:', newApp);
+      const newProduct = await insertProduct({
+        productTitle,
+        appleId,
+        appUrl,
+        categoryId,
+      });
+      const { productId } = newProduct;
+      const newProductTitle = newProduct.productTitle;
+      console.log('Inserted product:', newProduct);
     } catch (err) {
-      console.error(`❌ Failed to insert app ${appItem.id}:`, err.message);
+      console.error(
+        `❌ Failed to insert product ${productItem.id}:`,
+        err.message,
+      );
       // continue with next app
     }
   }
