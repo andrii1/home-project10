@@ -12,7 +12,7 @@ const GhostAdminAPI = require('@tryghost/admin-api');
 const OpenAI = require('openai');
 const fetchSerpApi = require('../serpApi');
 const searchApps = require('../searchApps');
-const insertApps = require('../insertProducts');
+const insertApps = require('../insertProductsWithKnex');
 const insertDeals = require('../insertDeals');
 
 const openai = new OpenAI({

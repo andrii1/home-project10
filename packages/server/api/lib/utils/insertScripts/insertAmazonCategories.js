@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 require('dotenv').config();
 const knex = require('../../../../config/db');
+const generateSlug = require('../generateSlug');
 
 const categories = [
   { title: 'Appliances', nodeId: '2619526011' },
@@ -40,12 +41,46 @@ const categories = [
   { title: 'Cell Phones & Accessories', nodeId: '2335753011' },
 ];
 
+// Helper: ensure the slug is unique by checking the DB
+async function ensureUniqueSlug(baseSlug) {
+  let slug = baseSlug;
+  let counter = 1;
+
+  // eslint-disable-next-line no-await-in-loop
+  while (await slugExists(slug)) {
+    const suffix = `-${counter}`;
+    const maxBaseLength = 200 - suffix.length; // adjust max length if needed
+    slug = `${baseSlug.slice(0, maxBaseLength)}${suffix}`;
+    counter += 1;
+  }
+
+  return slug;
+}
+
+// Helper: check if a slug already exists in the database
+async function slugExists(slug) {
+  const existing = await knex('categories').where({ slug }).first();
+  return !!existing;
+}
+
+// Insert categories with slugs
 async function insertCategories() {
   try {
-    console.log('Inserting Amazon US categories...');
+    console.log('Inserting Amazon US categories with slugs...');
 
-    // Prevent duplicates if rerun
-    await knex('categories').insert(categories).onConflict('nodeId').ignore();
+    for (const category of categories) {
+      const baseSlug = generateSlug(category.title);
+      const uniqueSlug = await ensureUniqueSlug(baseSlug);
+
+      await knex('categories')
+        .insert({
+          title: category.title,
+          nodeId: category.nodeId,
+          slug: uniqueSlug,
+        })
+        .onConflict('nodeId') // prevent duplicates by nodeId
+        .ignore();
+    }
 
     console.log('Done ✅');
   } catch (error) {

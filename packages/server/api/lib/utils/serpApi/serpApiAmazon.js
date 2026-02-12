@@ -119,7 +119,11 @@ function extractAmazonProducts(data) {
   }));
 }
 
-async function fetchSerpApiAmazon(categoryId, domain = 'amazon.com') {
+async function fetchSerpApiAmazon(
+  categoryId,
+  categoryTitle,
+  domain = 'amazon.com',
+) {
   const apiKey = apiKeys[currentKeyIndex];
   currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
 
@@ -138,7 +142,8 @@ async function fetchSerpApiAmazon(categoryId, domain = 'amazon.com') {
 
     const products = extractAmazonProducts(data).map((product) => ({
       ...product,
-      nodeId: categoryId,
+      categoryNodeId: categoryId,
+      categoryTitle: categoryTitle,
     }));
 
     console.log('products1', products);
@@ -153,7 +158,7 @@ const useAmazon = async () => {
   const allProducts = [];
 
   for (const category of amazonCategories) {
-    const products = await fetchSerpApiAmazon(category.nodeId);
+    const products = await fetchSerpApiAmazon(category.nodeId, category.title);
     allProducts.push(...products);
   }
   console.log('allProducts', allProducts);
