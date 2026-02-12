@@ -7,7 +7,7 @@ Can be deleted as soon as the first real controller is added. */
 const generateSlug = require('../lib/utils/generateSlug');
 const capitalize = require('../lib/utils/capitalize');
 const { normalizeUrl } = require('../lib/utils/normalizeUrl');
-const { getProductleId } = require('../lib/utils/getProductleIdByUrl');
+const { getAppleId } = require('../lib/utils/getAppleIdByUrl');
 const knex = require('../../config/db');
 const HttpError = require('../lib/utils/http-error');
 const OpenAI = require('openai');

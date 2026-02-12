@@ -184,15 +184,15 @@ export const Navigation = () => {
     </Link>
   ));
 
-  const dropDownResultsCategories = resultsHomeCategories?.map((result) => (
-    <Link
-      to={`/deals/category/${result.id}`}
-      /* state={{ frontPageItem: relatedTopics }} */
-      onClick={() => toggleSearchModal()}
-    >
-      <li key={result.id}>{result.title}</li>
-    </Link>
-  ));
+  // const dropDownResultsCategories = resultsHomeCategories?.map((result) => (
+  //   <Link
+  //     to={`/deals/category/${result.id}`}
+  //     /* state={{ frontPageItem: relatedTopics }} */
+  //     onClick={() => toggleSearchModal()}
+  //   >
+  //     <li key={result.id}>{result.title}</li>
+  //   </Link>
+  // ));
 
   return (
     <>
