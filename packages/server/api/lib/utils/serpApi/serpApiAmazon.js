@@ -67,7 +67,7 @@ const amazonCategories = [
   // { title: 'Software', nodeId: '409488' },
   // { title: 'Sports & Outdoors', nodeId: '3375301' },
   // { title: 'Tools & Home Improvement', nodeId: '468240' },
-  // { title: 'Toys & Games', nodeId: '165795011' },
+  { title: 'Toys & Games', nodeId: '165795011' },
   // { title: 'Vehicles', nodeId: '10677470011' },
   // { title: 'Video Games', nodeId: '11846801' },
   // { title: 'Wine', nodeId: '2983386011' },

@@ -3,7 +3,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable import/no-extraneous-dependencies */
 require('dotenv').config();
-const fetchSerpApiAmazon = require('../serpApiAmazon');
+const fetchSerpApiAmazon = require('./serpApiAmazon');
 
 // Credentials (from .env)
 const USER_UID = process.env.USER_UID_AMAZON_LOCAL;
@@ -22,7 +22,7 @@ const API_PATH = process.env.API_PATH_AMAZON_LOCAL;
 const today = new Date();
 const todayDay = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-const allowedDays = [0, 3, 5];
+const allowedDays = [0, 3, 4, 5];
 
 if (!allowedDays.includes(todayDay)) {
   console.log('Not an allowed day, skipping job.');

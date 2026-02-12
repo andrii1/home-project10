@@ -6,12 +6,10 @@
 Can be deleted as soon as the first real controller is added. */
 const generateSlug = require('../lib/utils/generateSlug');
 const capitalize = require('../lib/utils/capitalize');
-const { normalizeUrl } = require('../lib/utils/normalizeUrl');
-const { getAppleId } = require('../lib/utils/getAppleIdByUrl');
+
 const knex = require('../../config/db');
 const HttpError = require('../lib/utils/http-error');
 const OpenAI = require('openai');
-const store = require('product-store-scraper');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // make sure this is set in your .env
