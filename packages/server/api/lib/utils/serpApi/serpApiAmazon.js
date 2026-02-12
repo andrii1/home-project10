@@ -62,7 +62,7 @@ const amazonCategories = [
   // { title: 'CDs & Vinyl', nodeId: '301668' },
   // { title: 'Musical Instruments', nodeId: '11965861' },
   // { title: 'Office Products', nodeId: '1084128' },
-  { title: 'Computers', nodeId: '541966' },
+  // { title: 'Computers', nodeId: '541966' },
   // { title: 'Pet Supplies', nodeId: '2619534011' },
   // { title: 'Software', nodeId: '409488' },
   // { title: 'Sports & Outdoors', nodeId: '3375301' },
@@ -136,7 +136,10 @@ async function fetchSerpApiAmazon(categoryId, domain = 'amazon.com') {
     const data = await response.json();
     console.log('data', data);
 
-    const products = extractAmazonProducts(data);
+    const products = extractAmazonProducts(data).map((product) => ({
+      ...product,
+      nodeId: categoryId,
+    }));
 
     console.log('products1', products);
     return products;

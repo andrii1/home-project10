@@ -22,13 +22,6 @@ if (!allowedDays.includes(todayDay)) {
 
 // fetch helpers
 
-async function fetchAppByAppleId(appleId) {
-  const url = `https://itunes.apple.com/lookup?id=${appleId}`;
-  const response = await fetch(url);
-  const data = await response.json();
-  return data.results[0];
-}
-
 async function insertCategory(title, categoryNodeId) {
   const res = await fetch(`${API_PATH}/categories`, {
     method: 'POST',
@@ -67,7 +60,7 @@ async function insertApp({ appTitle, appleId, appUrl, categoryId }) {
   return data; // assume it returns { id, full_name }
 }
 
-const insertApps = async (appsParam) => {
+const insertProducts = async (appsParam) => {
   // console.log(appsParam);
   let products;
   if (allowedDays.includes(todayDay)) {

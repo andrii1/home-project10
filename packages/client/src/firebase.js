@@ -20,12 +20,12 @@ import {
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
-  authDomain: 'top-apps-9ef70.firebaseapp.com',
-  projectId: 'top-apps-9ef70',
-  storageBucket: 'top-apps-9ef70.firebasestorage.app',
-  messagingSenderId: '606984733817',
-  appId: '1:606984733817:web:a1d7064a47738bf5fec0a8',
-  measurementId: 'G-S245LH71YW',
+  authDomain: 'fir-e81a2.firebaseapp.com',
+  projectId: 'fir-e81a2',
+  storageBucket: 'fir-e81a2.firebasestorage.app',
+  messagingSenderId: '416230966710',
+  appId: '1:416230966710:web:1b7b75bd4665ab74572d17',
+  measurementId: 'G-S1WZ08NR5C',
 };
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
