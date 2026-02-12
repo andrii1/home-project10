@@ -42,19 +42,31 @@ async function insertCategory(title, categoryNodeId) {
   return data; // assume it returns { id, full_name }
 }
 
-async function insertProduct({ appTitle, appleId, appUrl, categoryId }) {
+async function insertProduct({
+  title,
+  asin,
+  price,
+  rating,
+  reviews,
+  url,
+  url_affiliate,
+  url_serpapi,
+  url_image,
+  categoryId,
+}) {
   const body = {
-    title: appTitle,
+    title,
+    asin,
+    price,
+    rating,
+    reviews,
+    url,
+    url_affiliate,
+    url_serpapi,
+    url_image,
     category_id: categoryId,
   };
 
-  if (appleId) {
-    body.apple_id = appleId;
-  }
-
-  if (appUrl) {
-    body.url = appUrl;
-  }
   const res = await fetch(`${API_PATH}/products/node`, {
     method: 'POST',
     headers: {
@@ -85,9 +97,15 @@ const insertProducts = async () => {
       console.log('Inserted category:', newCategory);
 
       const newProduct = await insertProduct({
-        productTitle,
-        appleId,
-        appUrl,
+        title: product.title,
+        asin: product.asin,
+        price: product.price,
+        rating: product.rating,
+        reviews: product.reviews,
+        url: product.url,
+        url_affiliate: product.url_affiliate,
+        url_serpapi: product.url_serpapi,
+        url_image: product.url_image,
         categoryId,
       });
       const { productId } = newProduct;
@@ -95,7 +113,7 @@ const insertProducts = async () => {
       console.log('Inserted product:', newProduct);
     } catch (err) {
       console.error(
-        `❌ Failed to insert product ${productItem.id}:`,
+        `❌ Failed to insert product ${product.asin}:`,
         err.message,
       );
       // continue with next app
@@ -103,4 +121,4 @@ const insertProducts = async () => {
   }
 };
 
-module.exports = insertApps;
+insertProducts().catch(console.log);
