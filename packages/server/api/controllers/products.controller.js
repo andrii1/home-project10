@@ -366,7 +366,7 @@ const getProductsBy = async ({
   tags,
   features,
   userTypes,
-  businessModels,
+  occasions,
   useCases,
   industries,
 }) => {
@@ -480,17 +480,17 @@ const getProductsBy = async ({
             });
           }
 
-          if (businessModels !== undefined) {
-            const businessModelsArray = businessModels.split(',');
+          if (occasions !== undefined) {
+            const occasionsArray = occasions.split(',');
             queryBuilder.whereIn('products.id', function () {
-              this.select('businessModelsProducts.product_id')
-                .from('businessModelsProducts')
+              this.select('occasionsProducts.product_id')
+                .from('occasionsProducts')
                 .join(
-                  'businessModels',
-                  'businessModelsProducts.businessModel_id',
-                  'businessModels.id',
+                  'occasions',
+                  'occasionsProducts.occasion_id',
+                  'occasions.id',
                 )
-                .whereIn('businessModels.slug', businessModelsArray);
+                .whereIn('occasions.slug', occasionsArray);
             });
           }
 
@@ -534,12 +534,12 @@ const getProductsBy = async ({
           //       .whereIn('userType_id', userTypesArray);
           //   });
           // }
-          // if (businessModels !== undefined) {
-          //   const businessModelsArray = businessModels.split(',');
+          // if (occasions !== undefined) {
+          //   const occasionsArray = occasions.split(',');
           //   queryBuilder.whereIn('products.id', function () {
           //     this.select('product_id')
-          //       .from('businessModelsProducts')
-          //       .whereIn('businessModel_id', businessModelsArray);
+          //       .from('occasionsProducts')
+          //       .whereIn('occasion_id', occasionsArray);
           //   });
           // }
           // if (useCases !== undefined) {
@@ -676,180 +676,137 @@ const createProductNode = async (token, body) => {
     );
 
     // === Prepare product info ===
-    let description,
-      urlIcon,
-      productUrl,
-      productExtra = {};
 
-    if (productleId) {
-      const lookupData = await (
-        await fetch(`https://itunes.productle.com/lookup?id=${productleId}`)
-      ).json();
-      const productInfo = lookupData.results[0];
-      description = productInfo.description;
-      urlIcon = productInfo.artworkUrl512;
-      const normalizedUrlProductleId = productInfo.sellerUrl
-        ? normalizeUrl(productInfo.sellerUrl)
-        : null;
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'user',
+          content: `Write a short, engaging description for product "${
+            body.title
+          }"${body.url ? ` with link ${body.url}` : ''}.`,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 3000,
+    });
+    const description = completion.choices[0].message.content.trim();
 
-      const product = await store.product({ id: productleId });
-      const {
-        price,
-        currency,
-        developer,
-        developerId,
-        developerUrl,
-        released,
-        languages,
-        free,
-      } = product;
+    //     // === Pricing + Attributes ===
 
-      productUrl = body.url ? normalizedUrl : normalizedUrlProductleId;
-      productExtra = {
-        productle_id: productleId,
-        url_icon: urlIcon,
-        price,
-        currency,
-        developer,
-        developer_id: developerId,
-        developer_url: developerUrl,
-        released: toMySQLTimestamp(released),
-        languages: JSON.stringify(languages),
-        pricing_ios_product_free: free,
-        pricing_ios_product_paid: !free,
-      };
-    } else {
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'user',
-            content: `Write a short, engaging description for product "${
-              body.title
-            }"${body.url ? ` with website ${body.url}` : ''}.`,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 3000,
-      });
-      description = completion.choices[0].message.content.trim();
-      productUrl = normalizedUrl;
-    }
+    //     const [pricingData, attributesData, faqData] = await Promise.all([
+    //       useChatGptForData(
+    //         `Given the product "${body.title}"${
+    //           productUrl ? ` with website ${productUrl}` : ''
+    //         }${
+    //           description ? ` and description: \"${description}\"` : ''
+    //         }, determine its pricing model.
 
-    // === Pricing + Attributes ===
+    // Return JSON with keys:
+    // {
+    //   "pricing_freemium": true/false,
+    //   "pricing_subscription": true/false,
+    //   "pricing_one_time": true/false,
+    //   "pricing_trial_available": true/false,
+    //   "pricing_details": "short human-readable text about pricing, e.g. '$9/mo or $89/year'",
+    //   "pricing_url": "official pricing page URL if available, otherwise null",
+    //   "pricing_free": true/false
+    // }
 
-    const [pricingData, attributesData, faqData] = await Promise.all([
-      useChatGptForData(
-        `Given the product "${body.title}"${
-          productUrl ? ` with website ${productUrl}` : ''
-        }${
-          description ? ` and description: \"${description}\"` : ''
-        }, determine its pricing model.
+    // Respond ONLY with valid JSON.`,
+    //       ),
 
-Return JSON with keys:
-{
-  "pricing_freemium": true/false,
-  "pricing_subscription": true/false,
-  "pricing_one_time": true/false,
-  "pricing_trial_available": true/false,
-  "pricing_details": "short human-readable text about pricing, e.g. '$9/mo or $89/year'",
-  "pricing_url": "official pricing page URL if available, otherwise null",
-  "pricing_free": true/false
-}
+    //       useChatGptForData(
+    //         `Based on the product "${body.title}"${
+    //           productUrl ? ` with website ${productUrl}` : ''
+    //         }${
+    //           description ? ` and description: \"${description}\"` : ''
+    //         }, determine if:
 
-Respond ONLY with valid JSON.`,
-      ),
+    // Return JSON with keys:
+    // {
+    //   "is_ai_powered": true/false,
+    //   "is_open_source": true/false,
+    //   "url_chrome_extension": url for browser extension (if available),
+    //   "url_google_play_store": url for android product (if available),
+    //   "url_windows": url for windows product (if available),
+    //   "url_mac": url for mac product (if available),
+    //   "url_x": url for X/twitter account (if available),
+    //   "url_discord": url for discord account (if available),
+    //   "url_fb": url for Facebook account (if available),
+    //   "url_linkedin": url for linkedin account (if available),
+    //   "e-mail": e-mail (if available, can be support e-mail),
+    // }
 
-      useChatGptForData(
-        `Based on the product "${body.title}"${
-          productUrl ? ` with website ${productUrl}` : ''
-        }${
-          description ? ` and description: \"${description}\"` : ''
-        }, determine if:
+    // Respond ONLY with valid JSON.`,
+    //       ),
 
-Return JSON with keys:
-{
-  "is_ai_powered": true/false,
-  "is_open_source": true/false,
-  "url_chrome_extension": url for browser extension (if available),
-  "url_google_play_store": url for android product (if available),
-  "url_windows": url for windows product (if available),
-  "url_mac": url for mac product (if available),
-  "url_x": url for X/twitter account (if available),
-  "url_discord": url for discord account (if available),
-  "url_fb": url for Facebook account (if available),
-  "url_linkedin": url for linkedin account (if available),
-  "e-mail": e-mail (if available, can be support e-mail),
-}
+    //       useChatGptForData(
+    //         `Based on the product "${body.title}"${
+    //           productUrl ? ` with website ${productUrl}` : ''
+    //         }${
+    //           description ? ` and description: \"${description}\"` : ''
+    //         }, determine if:
 
-Respond ONLY with valid JSON.`,
-      ),
+    // - How to create an account in product "${body.title}".
+    // - How to delete an account in product "${body.title}".
+    // - How to contact support in product "${body.title}".
+    // - How to cancel subscription for product "${body.title}".
+    // - How to change profile picture in product "${body.title}".
+    // - How to log in "${body.title}".
+    // - How to log out "${body.title}".
+    // - Is product "${body.title}" on Android?
+    // - Product "${body.title}" doesn't work? Any common bugs? How to solve them?
+    // - Is product "${body.title}" safe to use? Is it legit or scammy?
+    // - Can you make money with product "${body.title}"?
+    // - Does it make sense to upgrade in product "${
+    //           body.title
+    //         }"? What are main features of premium version.
+    // - Can you use product "${
+    //           body.title
+    //         }" for free? Any ways to credits/coins for free? Either via promos, invite codes, completing tasks, etc.
+    // - How to use "${body.title}"? Longer description.
 
-      useChatGptForData(
-        `Based on the product "${body.title}"${
-          productUrl ? ` with website ${productUrl}` : ''
-        }${
-          description ? ` and description: \"${description}\"` : ''
-        }, determine if:
+    // Return JSON with keys:
+    // {
+    //     "faq_create_account": answer,
+    //     "faq_delete_account": answer,
+    //     "faq_contact_support": answer,
+    //     "faq_cancel_subscription": answer,
+    //     "faq_change_profile_picture": answer,
+    //     "faq_log_in": answer,
+    //     "faq_log_out": answer,
+    //     "faq_is_product_on_android": answer,
+    //     "faq_product_doesnt_work_bugs": answer,
+    //     "faq_is_safe_to_use": answer,
+    //     "faq_how_to_make_money": answer,
+    //     "faq_should_you_upgrade": answer,
+    //     "faq_can_use_for_free": answer,
+    //     "description_how_to_use": answer,
 
-- How to create an account in product "${body.title}".
-- How to delete an account in product "${body.title}".
-- How to contact support in product "${body.title}".
-- How to cancel subscription for product "${body.title}".
-- How to change profile picture in product "${body.title}".
-- How to log in "${body.title}".
-- How to log out "${body.title}".
-- Is product "${body.title}" on Android?
-- Product "${body.title}" doesn't work? Any common bugs? How to solve them?
-- Is product "${body.title}" safe to use? Is it legit or scammy?
-- Can you make money with product "${body.title}"?
-- Does it make sense to upgrade in product "${
-          body.title
-        }"? What are main features of premium version.
-- Can you use product "${
-          body.title
-        }" for free? Any ways to credits/coins for free? Either via promos, invite codes, completing tasks, etc.
-- How to use "${body.title}"? Longer description.
+    // }
 
-
-Return JSON with keys:
-{
-    "faq_create_account": answer,
-    "faq_delete_account": answer,
-    "faq_contact_support": answer,
-    "faq_cancel_subscription": answer,
-    "faq_change_profile_picture": answer,
-    "faq_log_in": answer,
-    "faq_log_out": answer,
-    "faq_is_product_on_android": answer,
-    "faq_product_doesnt_work_bugs": answer,
-    "faq_is_safe_to_use": answer,
-    "faq_how_to_make_money": answer,
-    "faq_should_you_upgrade": answer,
-    "faq_can_use_for_free": answer,
-    "description_how_to_use": answer,
-
-}
-
-Respond ONLY with valid JSON.`,
-      ),
-    ]);
+    // Respond ONLY with valid JSON.`,
+    //       ),
+    //     ]);
 
     const baseSlug = generateSlug(body.title);
     const uniqueSlug = await ensureUniqueSlugItems(baseSlug, 'products');
 
     // === Insert product ===
     const [productId] = await knex('products').insert({
+      asin: body.asin,
       title: body.title,
       slug: uniqueSlug,
+      price: body.price,
+      rating: body.rating,
+      reviews: body.review,
       category_id: body.category_id,
-      url: productUrl,
-      user_id: user.id,
-      description,
-      ...productExtra,
-      ...pricingData,
-      ...attributesData,
-      ...faqData,
+      url: body.url,
+      url_affiliate: body.url_affiliate,
+      url_serpapi: body.url_serpapi,
+      url_image: body.url_image,
+      descriptionChatGpt: description,
     });
 
     // === Prompt builder ===
@@ -858,7 +815,7 @@ Respond ONLY with valid JSON.`,
         features:
           'E.g. Task management, Real-time chat, Analytics dashboard, Export to CSV, API access',
         userTypes: 'E.g. Individuals, Teams, Students, Startups, Enterprises',
-        businessModels: 'E.g. SaaS, Marketplace, Directory, Tool, Plugin, API',
+        occasions: 'E.g. SaaS, Marketplace, Directory, Tool, Plugin, API',
         useCases:
           'E.g. Social media automation, Time tracking, Resume building, Text summarization',
         industries:
@@ -874,25 +831,25 @@ Respond ONLY with valid JSON.`,
       )} should be without hashtag, can be multiple words. Maximum ${quantity} ${type}. Return ${type} separated by comma.`;
     };
 
-    // === Features, UserTypes, BusinessModels, UseCases, Industries ===
+    // === Features, UserTypes, Occasions, UseCases, Industries ===
     const featuresIds = await createItems(
-      buildPrompt('features', body.title, productUrl, description, '8'),
+      buildPrompt('features', body.title, body.url, description, '5'),
       'features',
     );
     const userTypesIds = await createItems(
-      buildPrompt('userTypes', body.title, productUrl, description, '8'),
+      buildPrompt('userTypes', body.title, body.url, description, '5'),
       'userTypes',
     );
-    const businessModelsIds = await createItems(
-      buildPrompt('businessModels', body.title, productUrl, description, '5'),
-      'businessModels',
+    const occasionsIds = await createItems(
+      buildPrompt('occasions', body.title, body.url, description, '5'),
+      'occasions',
     );
     const useCasesIds = await createItems(
-      buildPrompt('useCases', body.title, productUrl, description, '8'),
+      buildPrompt('useCases', body.title, body.url, description, '5'),
       'useCases',
     );
     const industriesIds = await createItems(
-      buildPrompt('industries', body.title, productUrl, description, '5'),
+      buildPrompt('industries', body.title, body.url, description, '5'),
       'industries',
     );
 
@@ -906,20 +863,16 @@ Respond ONLY with valid JSON.`,
     await insertRelations('tagsProducts', 'tag_id', tagIds);
     await insertRelations('featuresProducts', 'feature_id', featuresIds);
     await insertRelations('userTypesProducts', 'userType_id', userTypesIds);
-    await insertRelations(
-      'businessModelsProducts',
-      'businessModel_id',
-      businessModelsIds,
-    );
+    await insertRelations('occasionsProducts', 'occasion_id', occasionsIds);
     await insertRelations('useCasesProducts', 'useCase_id', useCasesIds);
     await insertRelations('industriesProducts', 'industry_id', industriesIds);
 
     return {
       successful: true,
       productId,
+      asin: body.asin,
       productTitle: body.title,
-      url: productUrl,
-      productProductleId: productleId || null,
+      url: body.url,
     };
   } catch (error) {
     return error.message;
