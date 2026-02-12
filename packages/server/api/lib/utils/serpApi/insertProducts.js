@@ -3,6 +3,8 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable import/no-extraneous-dependencies */
 const fetchSerpApiAmazon = require('../serpApiAmazon');
+const knex = require('../../../../config/db');
+const generateSlug = require('../generateSlug');
 
 require('dotenv').config();
 
@@ -20,20 +22,85 @@ if (!allowedDays.includes(todayDay)) {
   process.exit(0);
 }
 
+// Helper: ensure the slug is unique by checking the DB
+async function ensureUniqueSlug(baseSlug) {
+  let slug = baseSlug;
+  let counter = 1;
+
+  // eslint-disable-next-line no-await-in-loop
+  while (await slugExists(slug)) {
+    const suffix = `-${counter}`;
+    const maxBaseLength = 200 - suffix.length;
+    slug = `${baseSlug.slice(0, maxBaseLength)}${suffix}`;
+    counter += 1;
+  }
+
+  return slug;
+}
+
+// Helper: check if a slug already exists in the database
+async function slugExists(slug) {
+  const existing = await knex('categories').where({ slug }).first();
+  return !!existing;
+}
+
 // fetch helpers
 
-async function insertCategory(title, categoryNodeId) {
-  const res = await fetch(`${API_PATH}/categories`, {
-    method: 'POST',
-    headers: {
-      token: `token ${USER_UID}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ title, nodeId: categoryNodeId }),
-  });
-  const data = await res.json();
-  return data; // assume it returns { id, full_name }
-}
+// async function insertCategory(title, categoryNodeId) {
+//   const res = await fetch(`${API_PATH}/categories`, {
+//     method: 'POST',
+//     headers: {
+//       token: `token ${USER_UID}`,
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({ title, nodeId: categoryNodeId }),
+//   });
+//   const data = await res.json();
+//   return data; // assume it returns { id, full_name }
+// }
+
+const insertCategory = async (title, categoryNodeId = null) => {
+  try {
+    // Check if category already exists (case insensitive)
+    const existing = await knex('categories')
+      .whereRaw('LOWER(title) = ?', [title.toLowerCase()])
+      .first();
+
+    if (existing) {
+      return {
+        successful: true,
+        existing: true,
+        categoryId: existing.id,
+        categoryTitle: existing.title,
+      };
+    }
+
+    // Generate slug
+    const baseSlug = generateSlug(title);
+    const uniqueSlug = await ensureUniqueSlug(baseSlug);
+
+    const insertData = {
+      title,
+      slug: uniqueSlug,
+    };
+
+    if (categoryAppleId) {
+      insertData.category_apple_id = categoryAppleId;
+    }
+
+    const [categoryId] = await knex('categories').insert(insertData);
+
+    return {
+      successful: true,
+      existing: false,
+      categoryId,
+      categoryTitle: title,
+    };
+  } catch (error) {
+    console.error('Insert category error:', error);
+    throw error;
+  }
+};
 
 async function insertApp({ appTitle, appleId, appUrl, categoryId }) {
   const body = {
