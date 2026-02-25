@@ -6,7 +6,7 @@ const generateSlug = (title) => {
     .replace(/[^a-z0-9\s-]/g, '') // remove special characters
     .replace(/\s+/g, '-') // replace spaces with hyphens
     .replace(/-+/g, '-') // remove multiple hyphens
-    .slice(0, 200); // limit to 200 chars
+    .slice(0, 30); // limit to 200 chars
 };
 
 module.exports = generateSlug;
