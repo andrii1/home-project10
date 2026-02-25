@@ -95,7 +95,7 @@ export const Navigation = () => {
     }
 
     async function fetchApps() {
-      const response = await fetch(`${apiURL()}/apps/`);
+      const response = await fetch(`${apiURL()}/products/`);
       const data = await response.json();
       setApps(data);
     }

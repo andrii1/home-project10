@@ -98,10 +98,10 @@ export const ProductView = () => {
   const navigate = useNavigate();
   const [product, setProduct] = useState({});
   const [dealCodes, setDealCodes] = useState([]);
-  const [productProductStore, setProductProductStore] = useState({});
-  const [productProductStoreScraper, setProductProductStoreScraper] = useState(
-    {},
-  );
+  // const [productProductStore, setProductProductStore] = useState({});
+  // const [productProductStoreScraper, setProductProductStoreScraper] = useState(
+  //   {},
+  // );
   const [similarProducts, setSimilarProducts] = useState([]);
   const [similarDealsFromProduct, setSimilarDealsFromProduct] = useState([]);
   const [comments, setComments] = useState([]);
@@ -119,24 +119,24 @@ export const ProductView = () => {
   const [openAddCodeForm, setOpenAddCodeForm] = useState(false);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
   const [tags, setTags] = useState([]);
-  const [businessModels, setBusinessModels] = useState([]);
+  const [occasions, setOccasions] = useState([]);
   const [features, setFeatures] = useState([]);
   const [industries, setIndustries] = useState([]);
   const [useCases, setUseCases] = useState([]);
   const [userTypes, setUserTypes] = useState([]);
-  const {
-    likes: positiveLikes,
-    allLikes: allPositiveLikes,
-    addLike: addPositiveLike,
-    deleteLike: deletePositiveLike,
-  } = useLikes(user, 'positiveLikes');
+  // const {
+  //   likes: positiveLikes,
+  //   allLikes: allPositiveLikes,
+  //   addLike: addPositiveLike,
+  //   deleteLike: deletePositiveLike,
+  // } = useLikes(user, 'positiveLikes');
 
-  const {
-    likes: negativeLikes,
-    allLikes: allNegativeLikes,
-    addLike: addNegativeLike,
-    deleteLike: deleteNegativeLike,
-  } = useLikes(user, 'negativeLikes');
+  // const {
+  //   likes: negativeLikes,
+  //   allLikes: allNegativeLikes,
+  //   addLike: addNegativeLike,
+  //   deleteLike: deleteNegativeLike,
+  // } = useLikes(user, 'negativeLikes');
 
   const [faqs, setFaqs] = useState([]);
 
@@ -158,12 +158,12 @@ export const ProductView = () => {
       setTags(data);
     }
 
-    async function fetchBusinessModelsForProduct(productId) {
+    async function fetchOccasionsForProduct(productId) {
       const response = await fetch(
-        `${apiURL()}/businessModels/?product=${productId}`,
+        `${apiURL()}/occasions/?product=${productId}`,
       );
       const data = await response.json();
-      setBusinessModels(data);
+      setOccasions(data);
     }
 
     async function fetchFeaturesForProduct(productId) {
@@ -226,7 +226,7 @@ export const ProductView = () => {
       setError(null); // Clear previous errors
       try {
         await fetchTagsForProduct(id);
-        await fetchBusinessModelsForProduct(id);
+        await fetchOccasionsForProduct(id);
         await fetchFeaturesForProduct(id);
         await fetchIndustriesForProduct(id);
         await fetchUseCasesForProduct(id);
@@ -244,40 +244,40 @@ export const ProductView = () => {
     fetchData();
   }, [id]);
 
-  useEffect(() => {
-    async function fetchProductProductStore(productleId) {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `${apiURL()}/productsProductStore/${productleId}`,
-        );
-        const example = await response.json();
-        setProductProductStore(example.results[0]);
-      } catch (e) {
-        setError({ message: e.message || 'Failed to fetch data' });
-      }
-      setLoading(false);
-    }
-    product.productle_id && fetchProductProductStore(product.productle_id);
-  }, [product.productle_id]);
+  // useEffect(() => {
+  //   async function fetchProductProductStore(productleId) {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch(
+  //         `${apiURL()}/productsProductStore/${productleId}`,
+  //       );
+  //       const example = await response.json();
+  //       setProductProductStore(example.results[0]);
+  //     } catch (e) {
+  //       setError({ message: e.message || 'Failed to fetch data' });
+  //     }
+  //     setLoading(false);
+  //   }
+  //   product.productle_id && fetchProductProductStore(product.productle_id);
+  // }, [product.productle_id]);
 
-  useEffect(() => {
-    async function fetchProductProductStoreScraper(productleId) {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `${apiURL()}/productsProductStoreScraper/${productleId}`,
-        );
-        const data = await response.json();
-        setProductProductStoreScraper(data);
-      } catch (e) {
-        setError({ message: e.message || 'Failed to fetch data' });
-      }
-      setLoading(false);
-    }
-    product.productle_id &&
-      fetchProductProductStoreScraper(product.productle_id);
-  }, [product.productle_id]);
+  // useEffect(() => {
+  //   async function fetchProductProductStoreScraper(productleId) {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch(
+  //         `${apiURL()}/productsProductStoreScraper/${productleId}`,
+  //       );
+  //       const data = await response.json();
+  //       setProductProductStoreScraper(data);
+  //     } catch (e) {
+  //       setError({ message: e.message || 'Failed to fetch data' });
+  //     }
+  //     setLoading(false);
+  //   }
+  //   product.productle_id &&
+  //     fetchProductProductStoreScraper(product.productle_id);
+  // }, [product.productle_id]);
 
   useEffect(() => {
     const faqArray = faqConfig
@@ -335,7 +335,7 @@ export const ProductView = () => {
       method: 'POST',
       headers: {
         token: `token ${user?.uid}`,
-        'Content-Type': 'productlication/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         content: commentContent,
@@ -896,129 +896,7 @@ export const ProductView = () => {
               </>
             )}
           </div>
-          {product.description_how_to_use && (
-            <div className="container-description">
-              <div className="container-title">
-                <h2>How to use {product.title}</h2>
-              </div>
-              <p className="product-description main-description">
-                <Markdown>{product.description_how_to_use}</Markdown>
-              </p>
-            </div>
-          )}
-          {product.productle_id ||
-          product.url_google_play_store ||
-          product.url_chrome_extension ||
-          product.url_windows ||
-          product.url_mac ? (
-            <div className="container-appview-box">
-              <h2>Download product</h2>
-              <div className="container-store-logos">
-                {productProductStore.trackViewUrl && (
-                  <Link
-                    target="_blank"
-                    to={productProductStore.trackViewUrl}
-                    className="simple-link"
-                  >
-                    <img
-                      src={productStoreLogo}
-                      alt="Product Store logo"
-                      className="logo-store"
-                    />
-                  </Link>
-                )}
-                {product.url_google_play_store && (
-                  <Link
-                    target="_blank"
-                    to={product.url_google_play_store}
-                    className="simple-link"
-                  >
-                    <img
-                      src={googlePlayStoreLogo}
-                      alt="Google Play store logo"
-                      className="logo-store"
-                    />
-                  </Link>
-                )}
-                {product.url_chrome_extension && (
-                  <Link
-                    target="_blank"
-                    to={product.url_chrome_extension}
-                    className="simple-link"
-                  >
-                    <img
-                      src={chromeLogo}
-                      alt="Chrome logo"
-                      className="logo-store"
-                    />
-                  </Link>
-                )}
-                {product.url_mac && (
-                  <Link
-                    target="_blank"
-                    to={product.url_mac}
-                    className="simple-link"
-                  >
-                    <img src={macLogo} alt="Mac logo" className="logo-store" />
-                  </Link>
-                )}
-                {product.url_windows && (
-                  <Link
-                    target="_blank"
-                    to={product.url_windows}
-                    className="simple-link"
-                  >
-                    <img
-                      src={windowsLogo}
-                      alt="Windows logo"
-                      className="logo-store"
-                    />
-                  </Link>
-                )}
-              </div>
-            </div>
-          ) : (
-            ''
-          )}
-          <div className="container-appview-box container-description">
-            <h2>FAQs</h2>
-            {faqs.length > 0 ? (
-              faqsItems
-            ) : (
-              <p className="product-description ">No data yet</p>
-            )}
-          </div>
 
-          {product.productle_id && (
-            <div className="container-appview-box container-description">
-              <h2>{product.title} deals, promo codes, referral codes</h2>
-              <p className="product-description ">No data yet</p>
-            </div>
-          )}
-          {product.productle_id && (
-            <div className="container-appview-box container-description">
-              <h2>{product.title} errors</h2>
-              <p className="product-description ">No data yet</p>
-            </div>
-          )}
-          {product.productle_id && (
-            <div className="container-appview-box container-description">
-              <h2>Is {product.title} down?</h2>
-              <p className="product-description ">No data yet</p>
-            </div>
-          )}
-          {product.productle_id && (
-            <div className="container-appview-box container-description">
-              <h2>How to contact {product.title} support?</h2>
-              {product.faq_contact_support ? (
-                <p className="product-description ">
-                  {product.faq_contact_support}
-                </p>
-              ) : (
-                <p className="product-description ">No data yet</p>
-              )}
-            </div>
-          )}
           {/* <div className="container-codes">
             {dealCodes.length > 0 ? (
               <>
@@ -1262,152 +1140,8 @@ export const ProductView = () => {
           </div>
           <div className="container-details container-badges">
             <h2 className="no-margin">Reviews</h2>
+          </div>
 
-            {productProductStore.averageUserRating && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Average rating: </p>
-                  <div>{productProductStore.averageUserRating.toFixed(2)}</div>
-                </div>
-              </div>
-            )}
-            {productProductStore.userRatingCount && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Number of ratings: </p>
-                  <div>{productProductStore.userRatingCount}</div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="container-details container-badges">
-            <h2 className="no-margin">Social media</h2>
-            {(!!product.url_x ||
-              !!product.url_discord ||
-              !!product.url_fb ||
-              !!product.url_linkedin ||
-              !!product['e-mail'] ||
-              !!product.url) && (
-              <div className="container-tags">
-                {!!product.url_x && (
-                  <Link to={product.url_x} target="_blank">
-                    <FontAwesomeIcon className="share-icon" icon={faXTwitter} />
-                  </Link>
-                )}
-                {!!product.url_discord && (
-                  <Link to={product.url_discord} target="_blank">
-                    <FontAwesomeIcon className="share-icon" icon={faDiscord} />
-                  </Link>
-                )}
-                {!!product.url_fb && (
-                  <Link to={product.url_fb} target="_blank">
-                    <FontAwesomeIcon
-                      className="share-icon"
-                      icon={faFacebookF}
-                    />
-                  </Link>
-                )}
-                {!!product.url_linkedin && (
-                  <Link to={product.url_linkedin} target="_blank">
-                    <FontAwesomeIcon
-                      className="share-icon"
-                      icon={faLinkedinIn}
-                    />
-                  </Link>
-                )}
-                {!!product['e-mail'] && (
-                  <Link to={`mailto:${product['e-mail']}`} target="_blank">
-                    <FontAwesomeIcon className="share-icon" icon={faEnvelope} />
-                  </Link>
-                )}
-                {!!product.url && (
-                  <Link to={product.url} target="_blank">
-                    <FontAwesomeIcon className="share-icon" icon={faLink} />
-                  </Link>
-                )}
-              </div>
-            )}
-          </div>
-          <div className="container-details container-badges">
-            <h2 className="no-margin">Version & release</h2>
-            {product.developer && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Developer: </p>
-                  <div>
-                    <Link to={product.developer_url} target="_blank">
-                      <Button
-                        secondary
-                        label={product.developer}
-                        size="small"
-                        icon={
-                          <FontAwesomeIcon
-                            icon={faArrowUpRightFromSquare}
-                            size="sm"
-                          />
-                        }
-                      />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
-            {product.released && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Released: </p>
-                  <div>{getDateFromTimestamp(product.released)}</div>
-                </div>
-              </div>
-            )}
-            {productProductStoreScraper.updated && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Updated: </p>
-                  <div>
-                    {getDateFromTimestamp(productProductStoreScraper.updated)}
-                  </div>
-                </div>
-              </div>
-            )}
-            {productProductStore.version && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Current version: </p>
-                  <div>{productProductStore.version}</div>
-                </div>
-              </div>
-            )}
-            {productProductStore.fileSizeBytes && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Size: </p>
-                  <div>
-                    {`${(
-                      productProductStore.fileSizeBytes /
-                      (1024 * 1024)
-                    ).toFixed(2)} MB`}
-                  </div>
-                </div>
-              </div>
-            )}
-            {productProductStore.minimumOsVersion && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Minimum iOS version: </p>
-                  <div>{productProductStore.minimumOsVersion}</div>
-                </div>
-              </div>
-            )}
-            {productProductStore.trackContentRating && (
-              <div className="container-tags">
-                <div className="badges">
-                  <p>Content rating: </p>
-                  <div>{productProductStore.trackContentRating}</div>
-                </div>
-              </div>
-            )}
-          </div>
           <div className="container-details container-badges">
             <h2 className="no-margin">Category & tags</h2>
             <div className="container-tags">
@@ -1546,13 +1280,13 @@ export const ProductView = () => {
               </div>
             )}
 
-            {businessModels.length > 0 && (
+            {occasions.length > 0 && (
               <div className="container-tags">
                 <div className="badges">
                   <p className="p-no-margin">Business models: </p>
                   <div className="badges-keywords">
-                    {businessModels.map((tag) => (
-                      <Link to={`../products/businessModels/${tag.slug}`}>
+                    {occasions.map((tag) => (
+                      <Link to={`../products/occasions/${tag.slug}`}>
                         <Button
                           secondary
                           label={tag.title.toLowerCase()}
