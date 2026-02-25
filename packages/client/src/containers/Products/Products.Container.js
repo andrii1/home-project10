@@ -1208,7 +1208,7 @@ export const Products = () => {
                   title={product.title}
                   description={product.description}
                   url={product.url}
-                  urlImage={product.url_icon || globe}
+                  urlImage={product.url_image || globe}
                   topic={product.categoryTitle}
                   topicId={product.categorySlug}
                   pricingType={product.pricing_type}

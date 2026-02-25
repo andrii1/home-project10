@@ -695,11 +695,11 @@ export const ProductView = () => {
           <div className="header">
             <h1 className="hero-header">{product?.title}</h1>
           </div>
-          {product.url_icon ? (
+          {product.url_image ? (
             <img
               className="appview-icon default-icon"
               alt={`${product.title}`}
-              src={product.url_icon || mousePointer}
+              src={product.url_image || mousePointer}
             />
           ) : (
             <Globe size="15rem" className="appview-icon default-icon" />
@@ -885,6 +885,11 @@ export const ProductView = () => {
             {product.description && (
               <p className="product-description main-description">
                 <Markdown>{product.description}</Markdown>
+              </p>
+            )}
+            {product.descriptionChatGpt && (
+              <p className="product-description main-description">
+                <Markdown>{product.descriptionChatGpt}</Markdown>
               </p>
             )}
           </div>
@@ -1302,7 +1307,7 @@ export const ProductView = () => {
               ))}
             </div>
           </div> */}
-          <div className="icons-products-page">
+          <div className="icons-apps-page">
             <span>Share it: </span>
             <FontAwesomeIcon
               icon={faLink}
