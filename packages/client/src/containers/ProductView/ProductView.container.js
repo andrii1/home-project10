@@ -279,18 +279,18 @@ export const ProductView = () => {
   //     fetchProductProductStoreScraper(product.productle_id);
   // }, [product.productle_id]);
 
-  useEffect(() => {
-    const faqArray = faqConfig
-      .filter(({ key }) => product[key])
-      .map(({ key, title }) => ({
-        id: key,
-        title: title.replace('{product}', product.title || 'this product'),
-        text: product[key],
-        open: false,
-      }));
+  // useEffect(() => {
+  //   const faqArray = faqConfig
+  //     .filter(({ key }) => product[key])
+  //     .map(({ key, title }) => ({
+  //       id: key,
+  //       title: title.replace('{product}', product.title || 'this product'),
+  //       text: product[key],
+  //       open: false,
+  //     }));
 
-    setFaqs(faqArray);
-  }, [product]);
+  //   setFaqs(faqArray);
+  // }, [product]);
 
   useEffect(() => {
     async function fetchSimilarProducts() {
@@ -377,44 +377,44 @@ export const ProductView = () => {
     return date.toISOString().split('T')[0];
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const results = [];
-      const combinedText = `${product?.description} ${product?.description_long} ${product?.productDescription}`;
-      const words = getMostUsedWords(combinedText, 10);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     setLoading(true);
+  //     const results = [];
+  //     const combinedText = `${product?.description} ${product?.description_long} ${product?.productDescription}`;
+  //     const words = getMostUsedWords(combinedText, 10);
 
-      for (const [word] of words) {
-        try {
-          const res = await fetch(
-            `${apiURL()}/products?page=0&column=id&direction=desc&search=${encodeURIComponent(
-              word,
-            )}`,
-          );
-          const data = await res.json();
-          if (data.data.length > 1) {
-            const wordWithLink = {
-              title: word,
-              url: `products/search/${word}`,
-            };
-            results.push(wordWithLink);
-          }
-        } catch (err) {
-          return;
-        }
-      }
+  //     for (const [word] of words) {
+  //       try {
+  //         const res = await fetch(
+  //           `${apiURL()}/products?page=0&column=id&direction=desc&search=${encodeURIComponent(
+  //             word,
+  //           )}`,
+  //         );
+  //         const data = await res.json();
+  //         if (data.data.length > 1) {
+  //           const wordWithLink = {
+  //             title: word,
+  //             url: `products/search/${word}`,
+  //           };
+  //           results.push(wordWithLink);
+  //         }
+  //       } catch (err) {
+  //         return;
+  //       }
+  //     }
 
-      setTopicsFromDeals(results);
-      setLoading(false);
-    }
-    if (product?.description) {
-      fetchData();
-    }
-  }, [
-    product.description,
-    product.description_long,
-    product.productDescription,
-  ]);
+  //     setTopicsFromDeals(results);
+  //     setLoading(false);
+  //   }
+  //   if (product?.description) {
+  //     fetchData();
+  //   }
+  // }, [
+  //   product.description,
+  //   product.description_long,
+  //   product.productDescription,
+  // ]);
 
   const cardItems = similarProducts.map((item) => {
     // const relatedTopics = topics
@@ -489,7 +489,7 @@ export const ProductView = () => {
       method: 'POST',
       headers: {
         token: `token ${user?.uid}`,
-        'Content-Type': 'productlication/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         product_id: productId,
@@ -558,7 +558,7 @@ export const ProductView = () => {
       method: 'POST',
       headers: {
         token: `token ${user?.uid}`,
-        'Content-Type': 'productlication/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         product_id: productId,
@@ -575,7 +575,7 @@ export const ProductView = () => {
       method: 'DELETE',
       headers: {
         token: `token ${user?.uid}`,
-        'Content-Type': 'productlication/json',
+        'Content-Type': 'application/json',
       },
     });
     if (response.ok) {
@@ -813,7 +813,7 @@ export const ProductView = () => {
               )}
             </div>
           </div>
-          <div className="container-details container-badges">
+          {/* <div className="container-details container-badges">
             <h2 className="no-margin">Pricing</h2>
             <div className="container-tags">
               <div className="badges">
@@ -877,15 +877,16 @@ export const ProductView = () => {
                 </Link>
               </div>
             )}
-          </div>
+          </div> */}
           <div className="container-description">
             <div className="container-title">
               <h2>{product.title}</h2>
             </div>
-            <p className="product-description main-description">
-              <Markdown>{product.description}</Markdown>
-            </p>
-
+            {product.description && (
+              <p className="product-description main-description">
+                <Markdown>{product.description}</Markdown>
+              </p>
+            )}
             {product.description_long && (
               <>
                 <h3>Product details</h3>
@@ -1283,7 +1284,7 @@ export const ProductView = () => {
             {occasions.length > 0 && (
               <div className="container-tags">
                 <div className="badges">
-                  <p className="p-no-margin">Business models: </p>
+                  <p className="p-no-margin">Occasions: </p>
                   <div className="badges-keywords">
                     {occasions.map((tag) => (
                       <Link to={`../products/occasions/${tag.slug}`}>
@@ -1299,106 +1300,7 @@ export const ProductView = () => {
               </div>
             )}
           </div>
-          {product.languages && (
-            <div className="container-details container-badges">
-              <h2 className="no-margin">Languages</h2>
-              {JSON.parse(product.languages).join(', ')}
-            </div>
-          )}
-          {(!!product.is_ai_powered || !!product.is_open_source) && (
-            <div className="container-details container-badges">
-              <h2 className="no-margin">Other</h2>
 
-              <div className="container-tags">
-                <div className="badges">
-                  <div>
-                    {!!product.is_ai_powered && (
-                      <Link to="../products/other/ai" target="_blank">
-                        <Button
-                          secondary
-                          label="AI powered"
-                          size="small"
-                          icon={
-                            <FontAwesomeIcon
-                              icon={faArrowUpRightFromSquare}
-                              size="sm"
-                            />
-                          }
-                        />
-                      </Link>
-                    )}
-                    {!!product.is_open_source && (
-                      <Link to="../products/other/open-source" target="_blank">
-                        <Button
-                          secondary
-                          label="open source"
-                          size="small"
-                          icon={
-                            <FontAwesomeIcon
-                              icon={faArrowUpRightFromSquare}
-                              size="sm"
-                            />
-                          }
-                        />
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {product.productUrlProductStore ||
-          product.productUrlGooglePlayStore ? (
-            <div className="container-appview-box">
-              <h2>Download {product.productTitle} product</h2>
-              <div className="container-store-logos">
-                {product.productUrlProductStore && (
-                  <Link
-                    target="_blank"
-                    to={product.productUrlProductStore}
-                    className="simple-link"
-                  >
-                    <img
-                      src={productStoreLogo}
-                      alt="Product Store logo"
-                      className="logo-store"
-                    />
-                  </Link>
-                )}
-                {product.productUrlGooglePlayStore && (
-                  <Link
-                    target="_blank"
-                    to={product.productUrlGooglePlayStore}
-                    className="simple-link"
-                  >
-                    <img
-                      src={googlePlayStoreLogo}
-                      alt="Google Play store logo"
-                      className="logo-store"
-                    />
-                  </Link>
-                )}
-              </div>
-            </div>
-          ) : (
-            ''
-          )}
-
-          {product.contact && (
-            <div className="container-appview-box">
-              <h2>{product.title} support</h2>
-              <div>
-                <Link to={`mailto:${product.contact}`} target="_blank">
-                  <Button
-                    secondary
-                    icon={<FontAwesomeIcon icon={faEnvelope} size="sm" />}
-                    label={`Contact ${product.productTitle} support`}
-                  />
-                </Link>
-              </div>
-            </div>
-          )}
           {/* <div className="container-related-searches">
             <h3>Related searches</h3>
             <div className="topics-div searches">
