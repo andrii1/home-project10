@@ -9,9 +9,9 @@ const router = express.Router({ mergeParams: true });
 const userTypesController = require('../controllers/userTypes.controller');
 
 router.get('/', (req, res, next) => {
-  if (req.query.app) {
+  if (req.query.product) {
     userTypesController
-      .getUserTypesByApp(req.query.app)
+      .getUserTypesByProduct(req.query.product)
       .then((result) => res.json(result))
       .catch(next);
   } else {

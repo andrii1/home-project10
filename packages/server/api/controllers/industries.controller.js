@@ -12,18 +12,18 @@ const getIndustries = async () => {
   }
 };
 
-const getIndustriesByApp = async (app) => {
+const getIndustriesByProduct = async (product) => {
   try {
     const industries = await knex('industries')
       .select('industries.*')
       .join(
-        'industriesApps',
-        'industriesApps.industry_id',
+        'industriesProducts',
+        'industriesProducts.industry_id',
         '=',
         'industries.id',
       )
-      .join('apps', 'industriesApps.app_id', '=', 'apps.id')
-      .where({ app_id: app });
+      .join('products', 'industriesProducts.product_id', '=', 'products.id')
+      .where({ product_id: product });
     return industries;
   } catch (error) {
     return error.message;
@@ -32,5 +32,5 @@ const getIndustriesByApp = async (app) => {
 
 module.exports = {
   getIndustries,
-  getIndustriesByApp,
+  getIndustriesByProduct,
 };

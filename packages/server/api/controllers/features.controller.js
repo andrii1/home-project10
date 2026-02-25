@@ -13,13 +13,18 @@ const getFeatures = async () => {
   }
 };
 
-const getFeaturesByApp = async (app) => {
+const getFeaturesByProduct = async (product) => {
   try {
     const features = await knex('features')
       .select('features.*')
-      .join('featuresApps', 'featuresApps.feature_id', '=', 'features.id')
-      .join('apps', 'featuresApps.app_id', '=', 'apps.id')
-      .where({ app_id: app });
+      .join(
+        'featuresProducts',
+        'featuresProducts.feature_id',
+        '=',
+        'features.id',
+      )
+      .join('products', 'featuresProducts.product_id', '=', 'products.id')
+      .where({ product_id: product });
     return features;
   } catch (error) {
     return error.message;
@@ -28,5 +33,5 @@ const getFeaturesByApp = async (app) => {
 
 module.exports = {
   getFeatures,
-  getFeaturesByApp,
+  getFeaturesByProduct,
 };

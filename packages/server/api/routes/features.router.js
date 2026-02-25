@@ -9,9 +9,9 @@ const router = express.Router({ mergeParams: true });
 const featuresController = require('../controllers/features.controller');
 
 router.get('/', (req, res, next) => {
-  if (req.query.app) {
+  if (req.query.product) {
     featuresController
-      .getFeaturesByApp(req.query.app)
+      .getFeaturesByProduct(req.query.product)
       .then((result) => res.json(result))
       .catch(next);
   } else {

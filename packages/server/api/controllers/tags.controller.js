@@ -54,13 +54,13 @@ const getTagById = async (slug) => {
 };
 
 // Get topics by Category
-const getTagsByApp = async (app) => {
+const getTagsByProduct = async (product) => {
   try {
     const tags = await knex('tags')
       .select('tags.*')
-      .join('tagsApps', 'tagsApps.tag_id', '=', 'tags.id')
-      .join('apps', 'tagsApps.app_id', '=', 'apps.id')
-      .where({ app_id: app });
+      .join('tagsProducts', 'tagsProducts.tag_id', '=', 'tags.id')
+      .join('products', 'tagsProducts.product_id', '=', 'products.id')
+      .where({ product_id: product });
     return tags;
   } catch (error) {
     return error.message;
@@ -109,6 +109,6 @@ const createTag = async (token, body) => {
 module.exports = {
   getTags,
   getTagById,
-  getTagsByApp,
+  getTagsByProduct,
   createTag,
 };

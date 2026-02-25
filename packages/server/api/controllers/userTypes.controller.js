@@ -13,13 +13,18 @@ const getUserTypes = async () => {
   }
 };
 
-const getUserTypesByApp = async (app) => {
+const getUserTypesByProduct = async (product) => {
   try {
     const userTypes = await knex('userTypes')
       .select('userTypes.*')
-      .join('userTypesApps', 'userTypesApps.userType_id', '=', 'userTypes.id')
-      .join('apps', 'userTypesApps.app_id', '=', 'apps.id')
-      .where({ app_id: app });
+      .join(
+        'userTypesProducts',
+        'userTypesProducts.userType_id',
+        '=',
+        'userTypes.id',
+      )
+      .join('products', 'userTypesProducts.product_id', '=', 'products.id')
+      .where({ product_id: product });
     return userTypes;
   } catch (error) {
     return error.message;
@@ -28,5 +33,5 @@ const getUserTypesByApp = async (app) => {
 
 module.exports = {
   getUserTypes,
-  getUserTypesByApp,
+  getUserTypesByProduct,
 };

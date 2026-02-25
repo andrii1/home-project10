@@ -13,18 +13,18 @@ const getOccasions = async () => {
   }
 };
 
-const getOccasionsByApp = async (app) => {
+const getOccasionsByProduct = async (product) => {
   try {
     const occasions = await knex('occasions')
       .select('occasions.*')
       .join(
-        'occasionsApps',
-        'occasionsApps.businessModel_id',
+        'occasionsProducts',
+        'occasionsProducts.occasion_id',
         '=',
         'occasions.id',
       )
-      .join('apps', 'occasionsApps.app_id', '=', 'apps.id')
-      .where({ app_id: app });
+      .join('products', 'occasionsProducts.product_id', '=', 'products.id')
+      .where({ product_id: product });
     return occasions;
   } catch (error) {
     return error.message;
@@ -33,5 +33,5 @@ const getOccasionsByApp = async (app) => {
 
 module.exports = {
   getOccasions,
-  getOccasionsByApp,
+  getOccasionsByProduct,
 };

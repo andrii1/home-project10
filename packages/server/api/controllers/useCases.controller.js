@@ -12,13 +12,18 @@ const getUseCases = async () => {
   }
 };
 
-const getUseCasesByApp = async (app) => {
+const getUseCasesByProduct = async (product) => {
   try {
     const useCases = await knex('useCases')
       .select('useCases.*')
-      .join('useCasesApps', 'useCasesApps.useCase_id', '=', 'useCases.id')
-      .join('apps', 'useCasesApps.app_id', '=', 'apps.id')
-      .where({ app_id: app });
+      .join(
+        'useCasesProducts',
+        'useCasesProducts.useCase_id',
+        '=',
+        'useCases.id',
+      )
+      .join('products', 'useCasesProducts.product_id', '=', 'products.id')
+      .where({ product_id: product });
     return useCases;
   } catch (error) {
     return error.message;
@@ -27,5 +32,5 @@ const getUseCasesByApp = async (app) => {
 
 module.exports = {
   getUseCases,
-  getUseCasesByApp,
+  getUseCasesByProduct,
 };

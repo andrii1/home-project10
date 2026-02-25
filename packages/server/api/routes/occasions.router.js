@@ -9,9 +9,9 @@ const router = express.Router({ mergeParams: true });
 const occasionsController = require('../controllers/occasions.controller');
 
 router.get('/', (req, res, next) => {
-  if (req.query.app) {
+  if (req.query.product) {
     occasionsController
-      .getOccasionsByApp(req.query.app)
+      .getOccasionsByProduct(req.query.product)
       .then((result) => res.json(result))
       .catch(next);
   } else {

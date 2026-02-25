@@ -887,15 +887,6 @@ export const ProductView = () => {
                 <Markdown>{product.description}</Markdown>
               </p>
             )}
-            {product.description_long && (
-              <>
-                <h3>Product details</h3>
-                <p className="product-description">
-                  {' '}
-                  <Markdown>{product.description_long}</Markdown>
-                </p>
-              </>
-            )}
           </div>
 
           {/* <div className="container-codes">

@@ -4,17 +4,17 @@ documentation. Can be deleted when the first real route is added. */
 const express = require('express');
 
 const router = express.Router({ mergeParams: true });
-// const topicAppsRouter = require('./topicApps.router');
+// const topicProductsRouter = require('./topicProducts.router');
 
-// router.use('/:id/apps', topicAppsRouter);
+// router.use('/:id/products', topicProductsRouter);
 
 // controllers
 const tagsController = require('../controllers/tags.controller');
 
 router.get('/', (req, res, next) => {
-  if (req.query.app) {
+  if (req.query.product) {
     tagsController
-      .getTagsByApp(req.query.app)
+      .getTagsByProduct(req.query.product)
       .then((result) => res.json(result))
       .catch(next);
   } else {
