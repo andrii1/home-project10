@@ -711,6 +711,19 @@ export const ProductView = () => {
           /> */}
 
           {/* <ImageGallery items={images} /> */}
+          <div>
+            <p className="price">
+              {product.currency === 'USD' && (
+                <span className="currency">$</span>
+              )}
+              <span className="amount">
+                {Math.floor(parseFloat(product.price))}
+              </span>
+              <span className="cents">
+                {parseFloat(product.price).toFixed(2).split('.')[1]}
+              </span>
+            </p>
+          </div>
           <div className="container-deal-actions">
             <div className="container-appview-buttons">
               {product.url_affiliate && (
