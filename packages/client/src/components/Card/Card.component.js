@@ -48,11 +48,9 @@ export const Card = ({
         to={cardUrl}
         className="card-category--small card-image--small"
         style={{
-          backgroundImage: `url(http://res.cloudinary.com/dgarvanzw/image/upload/w_500,q_auto,f_auto/deals/${urlImage}.${
-            urlImage === 'deal' ? 'svg' : 'png'
-          } )`,
+          backgroundImage: `url(${urlImage})`,
           backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
+          // backgroundSize: 'cover',
         }}
       >
         <div className="card-header">

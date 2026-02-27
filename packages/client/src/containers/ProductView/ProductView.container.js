@@ -426,12 +426,14 @@ export const ProductView = () => {
         id={item.id}
         cardUrl={`/products/${item.slug}`}
         title={item.title}
+        price={item.price}
+        currency={item.currency}
+        urlAffiliate={item.url_affiliate}
         description={item.description}
         url={item.url}
         urlImage={item.url_image === null ? 'deal' : item.url_image}
         topic={item.categoryTitle}
         productTitle={item.productTitle}
-        smallCard
       />
     );
   });
