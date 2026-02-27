@@ -1211,6 +1211,8 @@ export const Products = () => {
                   urlImage={product.url_image || globe}
                   topic={product.categoryTitle}
                   topicId={product.categorySlug}
+                  price={product.price}
+                  currency={product.currency}
                   pricingType={product.pricing_type}
                   isFavorite={favorites.some((x) => x.id === product.id)}
                   addFavorite={(event) => addFavorite(product.id)}

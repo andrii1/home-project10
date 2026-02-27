@@ -188,6 +188,13 @@
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
+.price-card {
+  /* color: #e5989b; */
+  font-weight: bold;
+  font-size: 1rem;
+  margin: 0rem;
+}
+
 @media only screen and (max-width: 768px) {
   .card-list {
     min-height: 7rem;

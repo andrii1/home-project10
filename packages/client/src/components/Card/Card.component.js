@@ -25,6 +25,9 @@ export const Card = ({
   topicId,
   appId,
   appTitle,
+  price,
+  currency,
+  urlAffiliate,
   url,
   cardUrl,
   urlImage,
@@ -87,14 +90,6 @@ export const Card = ({
             <Link to={cardUrl}>
               <h2>{title.split(' ').slice(0, 10).join(' ')}</h2>
             </Link>
-            <Link to={cardUrl}>
-              {/* <FontAwesomeIcon
-                className="icon-card"
-                icon={faArrowUpRightFromSquare}
-                style={{ color: '#e5989b' }}
-                size="lg"
-              /> */}
-            </Link>
           </div>
           {/* <Badge label={appTitle} size="small" /> */}
         </div>
@@ -109,6 +104,14 @@ export const Card = ({
               .join(' ')}...`}
           </div>
         )}
+
+        <div>
+          <p className="price-card">
+            {currency === 'USD' && <span>$</span>}
+            <span className="amount">{price}</span>
+          </p>
+        </div>
+
         <div className="topics-bookmark">
           <div className="container-topic-app">
             {/* <Link target="_blank" to={`/deals/app/${appId}`}>
@@ -148,6 +151,18 @@ export const Card = ({
             </button>
           )}
         </div>
+        <div>
+          <Link to={urlAffiliate} target="_blank">
+            <Button
+              fourth
+              size="medium"
+              icon={
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />
+              }
+              label="Buy Now"
+            />
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -174,6 +189,9 @@ Card.propTypes = {
   addFavorite: PropTypes.func,
   deleteBookmark: PropTypes.func,
   bookmarkOnClick: PropTypes.func,
+  price: PropTypes.string,
+  currency: PropTypes.string,
+  urlAffiliate: PropTypes.string,
 };
 
 Card.defaultProps = {
@@ -197,4 +215,7 @@ Card.defaultProps = {
   deleteBookmark: undefined,
   bookmarkOnClick: undefined,
   referralCodeOnClick: undefined,
+  price: null,
+  currency: null,
+  urlAffiliate: null,
 };
