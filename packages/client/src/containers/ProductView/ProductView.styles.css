@@ -391,7 +391,7 @@ span.underline:hover {
 
   .container-deal-actions {
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 2rem;
   }
 
   .container-codes-users {

@@ -712,6 +712,23 @@ export const ProductView = () => {
 
           {/* <ImageGallery items={images} /> */}
           <div className="container-deal-actions">
+            <div className="container-appview-buttons">
+              {product.url_affiliate && (
+                <Link to={product.url_affiliate} target="_blank">
+                  <Button
+                    fourth
+                    size="large"
+                    icon={
+                      <FontAwesomeIcon
+                        icon={faArrowUpRightFromSquare}
+                        size="sm"
+                      />
+                    }
+                    label="Buy Now"
+                  />
+                </Link>
+              )}
+            </div>
             <div className="container-rating">
               Rating
               {user &&
@@ -760,23 +777,7 @@ export const ProductView = () => {
                 </button>
               )}
             </div>
-            <div className="container-appview-buttons">
-              {product.url && (
-                <Link to={product.url} target="_blank">
-                  <Button
-                    size="large"
-                    secondary
-                    icon={
-                      <FontAwesomeIcon
-                        icon={faArrowUpRightFromSquare}
-                        size="sm"
-                      />
-                    }
-                    label="Visit website"
-                  />
-                </Link>
-              )}
-            </div>
+
             <div>
               {user && favorites.some((x) => x.id === product.id) ? (
                 <button
