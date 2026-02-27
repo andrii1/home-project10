@@ -300,7 +300,8 @@ export const ProductView = () => {
         const data = await response.json();
         const similarProductsArray = data
           .filter((item) => item.category_id === product.category_id)
-          .filter((item) => item.id !== product.id);
+          .filter((item) => item.id !== product.id)
+          .slice(0, 10);
         setSimilarProducts(similarProductsArray);
 
         // const similarDealsFromProductArray = productsResponse
@@ -1070,7 +1071,7 @@ export const ProductView = () => {
               </div>
             )}
           </div> */}
-          {!user && (
+          {/* {!user && (
             <div className="container-details cta">
               <div>
                 <h2>🔥 Add your product!</h2>
@@ -1082,7 +1083,7 @@ export const ProductView = () => {
                 </Link>
               </div>
             </div>
-          )}
+          )} */}
           <div className="container-comments">
             <h2 className="h-no-margin h-no-margin-bottom">Comments</h2>
             {comments.length === 0 && (
@@ -1149,9 +1150,9 @@ export const ProductView = () => {
               </div>
             )}
           </div>
-          <div className="container-details container-badges">
+          {/* <div className="container-details container-badges">
             <h2 className="no-margin">Reviews</h2>
-          </div>
+          </div> */}
 
           <div className="container-details container-badges">
             <h2 className="no-margin">Category & tags</h2>
