@@ -112,49 +112,11 @@ export const Card = ({
           </p>
         </div>
 
-        <div className="topics-bookmark">
-          <div className="container-topic-app">
-            {/* <Link target="_blank" to={`/deals/app/${appId}`}>
-              <Button secondary label={appTitle} size="small" />
-            </Link> */}
-            <Link to={`/products/categories/${topicId}`}>
-              <Button secondary label={topic} size="small" />
-            </Link>
-          </div>
-
-          {user && isFavorite ? (
-            <button
-              type="button"
-              onClick={deleteBookmark}
-              onKeyDown={deleteBookmark}
-              className="button-bookmark"
-            >
-              <FontAwesomeIcon icon={faHeartSolid} size="lg" />
-            </button>
-          ) : user ? (
-            <button
-              type="button"
-              onClick={addFavorite}
-              onKeyDown={addFavorite}
-              className="button-bookmark"
-            >
-              <FontAwesomeIcon icon={faHeart} size="lg" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={bookmarkOnClick}
-              onKeyDown={addFavorite}
-              className="button-bookmark"
-            >
-              <FontAwesomeIcon icon={faHeart} size="lg" />
-            </button>
-          )}
-        </div>
         <div>
           <Link to={urlAffiliate} target="_blank">
             <Button
               fourth
+              className="btn-card-affiliate"
               size="medium"
               icon={
                 <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />

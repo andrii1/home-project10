@@ -1213,6 +1213,7 @@ export const Products = () => {
                   topicId={product.categorySlug}
                   price={product.price}
                   currency={product.currency}
+                  urlAffiliate={product.url_affiliate}
                   pricingType={product.pricing_type}
                   isFavorite={favorites.some((x) => x.id === product.id)}
                   addFavorite={(event) => addFavorite(product.id)}

@@ -105,7 +105,7 @@
 }
 
 .card-category h2 {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .card-list .card-header {
@@ -193,6 +193,12 @@
   font-weight: bold;
   font-size: 1rem;
   margin: 0rem;
+}
+
+.btn-card-affiliate {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 @media only screen and (max-width: 768px) {
