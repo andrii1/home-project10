@@ -186,7 +186,7 @@ export const Navigation = () => {
 
   const dropDownResultsCategories = resultsHomeCategories?.map((result) => (
     <Link
-      to={`/products/category/${result.slug}`}
+      to={`/products/categories/${result.slug}`}
       /* state={{ frontPageItem: relatedTopics }} */
       onClick={() => toggleSearchModal()}
     >
@@ -225,6 +225,15 @@ export const Navigation = () => {
                       Categories
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink
+                      to="/tags"
+                      onClick={toggleHamburger}
+                      className="nav-link"
+                    >
+                      Tags
+                    </NavLink>
+                  </li>
                   {/* <li>
                     <NavLink
                       to="/all-apps"
@@ -243,7 +252,7 @@ export const Navigation = () => {
                       Community
                     </NavLink>
                   </li> */}
-                  <li>
+                  {/* <li>
                     {!user && (
                       <NavLink
                         onClick={() => {
@@ -255,7 +264,7 @@ export const Navigation = () => {
                         Add your app
                       </NavLink>
                     )}
-                  </li>
+                  </li> */}
                 </ul>
               </li>
               {/* <li>
@@ -326,13 +335,13 @@ export const Navigation = () => {
                     >
                       Bookmarks
                     </NavLink>
-                    <NavLink
+                    {/* <NavLink
                       onClick={toggleHamburgerUser}
                       to="/apps/new"
                       className="login nav-link"
                     >
                       Add your app
-                    </NavLink>
+                    </NavLink> */}
                     <NavLink
                       onClick={toggleHamburgerUser}
                       to={`mailto:agorh@icloud.com?subject=Support%20Request%20TAD&body=Hi%20team%2C%0A%0AMy%20email%20is%3A%20${
@@ -400,6 +409,11 @@ export const Navigation = () => {
                 Categories
               </NavLink>
             </li>
+            <li className="hide-on-tablet">
+              <NavLink to="/tags" className="nav-link">
+                Tags
+              </NavLink>
+            </li>
             {/* <li className="hide-on-tablet">
               <NavLink to="/all-apps" className="nav-link">
                 Apps
@@ -438,7 +452,7 @@ export const Navigation = () => {
                   <NavLink to="/bookmarks" className="login">
                     Bookmarks
                   </NavLink>
-                  <NavLink to="/apps/new">Add your app</NavLink>
+                  {/* <NavLink to="/apps/new">Add your app</NavLink> */}
                   <NavLink
                     to={`mailto:agorh@icloud.com?subject=Support%20Request%20TAD&body=Hi%20team%2C%0A%0AMy%20email%20is%3A%20${
                       user ? user?.email : ''
