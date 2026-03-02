@@ -7,6 +7,7 @@ import { CardCategories } from '../../components/CardCategories/CardCategories.c
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '../../components/Button/Button.component';
+import { capitalize } from '../../utils/capitalize';
 
 export const Tags = () => {
   const [searchTerms, setSearchTerms] = useState('');
@@ -49,7 +50,7 @@ export const Tags = () => {
         <div className="topics-div">
           {item.tagTitles.map((tag) => (
             <Link to={`/products/tags/${tag.slug}`}>
-              <Button secondary label={tag.title} />
+              <Button secondary label={capitalize(tag.title)} />
             </Link>
           ))}
         </div>
@@ -78,12 +79,12 @@ export const Tags = () => {
               className="input-search-home"
               onChange={handleSearch}
               /* onFocus={handleClick} */
-              placeholder="Search apps"
+              placeholder="Search tags"
             />
           </label>
         </form>
       </div>
-      <section className="container-cards">{cardItems}</section>
+      <section className="container-cards-tags">{cardItems}</section>
     </main>
   );
 };
