@@ -84,7 +84,10 @@ export const Tags = () => {
           </label>
         </form>
       </div>
-      <section className="container-cards-tags">{cardItems}</section>
+      <section className="container-cards-tags">
+        {' '}
+        {groupedTags.length > 0 ? cardItems : 'No tags found'}
+      </section>
     </main>
   );
 };

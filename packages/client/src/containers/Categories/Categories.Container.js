@@ -6,6 +6,8 @@ import { apiURL } from '../../apiURL';
 import { CardCategories } from '../../components/CardCategories/CardCategories.component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { Button } from '../../components/Button/Button.component';
+import { capitalize } from '../../utils/capitalize';
 
 export const Categories = () => {
   const [searchTerms, setSearchTerms] = useState('');
@@ -33,20 +35,21 @@ export const Categories = () => {
     return (
       <div className="card-category-new">
         <Link to={`/products/categories/${category.slug}`}>
-          <h2>{category.title}</h2>
+          <Button secondary label={capitalize(category.title)} />
         </Link>
       </div>
     );
   });
+
   return (
     <main>
       <Helmet>
-        <title>Best Amazon products</title>
+        <title>Categories</title>
         <meta name="description" content="Find best Amazon products" />
       </Helmet>
       {/* <div className="hero"></div> */}
       <div className="hero">
-        <h1 className="hero-header">Categories for products</h1>
+        <h1 className="hero-header">Categories</h1>
 
         <form>
           <label>
@@ -64,7 +67,7 @@ export const Categories = () => {
           </label>
         </form>
       </div>
-      <section>
+      <section className="container-cards-tags">
         {filteredCategories.length > 0 ? cardItems : 'No categories found'}
       </section>
     </main>
