@@ -33,8 +33,9 @@ export const Navigation = () => {
   const [deals, setDeals] = useState([]);
   const [resultsHome, setResultsHome] = useState([]);
   // const [resultsHomeApps, setResultsHomeApps] = useState([]);
-  const [topics, setTopics] = useState([]);
+  const [tags, setTags] = useState([]);
   const [categories, setCategories] = useState([]);
+
   const inputRef = useRef(null);
 
   const toggleModal = () => {
@@ -82,11 +83,11 @@ export const Navigation = () => {
     //   }
     // }
 
-    // async function fetchTopics() {
-    //   const response = await fetch(`${apiURL()}/topics/`);
-    //   const data = await response.json();
-    //   setTopics(data);
-    // }
+    async function fetchTags() {
+      const response = await fetch(`${apiURL()}/tags/`);
+      const data = await response.json();
+      setTags(data);
+    }
 
     async function fetchCategories() {
       const response = await fetch(`${apiURL()}/categories/`);
@@ -94,53 +95,54 @@ export const Navigation = () => {
       setCategories(data);
     }
 
-    async function fetchApps() {
+    async function fetchProducts() {
       const response = await fetch(`${apiURL()}/products/`);
       const data = await response.json();
       setApps(data);
     }
 
-    fetchApps();
-    // fetchTopics();
+    fetchProducts();
+    fetchTags();
     fetchCategories();
   }, []);
 
-  const filterAppsBySearch = (search) => {
+  console.log('products', apps);
+
+  const filterProductsBySearch = (search) => {
     if (search) {
       return apps.filter(
         (item) =>
-          item.title.toLowerCase().includes(searchTerms.toLowerCase()) ||
-          item.description?.toLowerCase().includes(searchTerms.toLowerCase()) ||
-          item.description_long
+          item.title.toLowerCase().includes(search.toLowerCase()) ||
+          item.description?.toLowerCase().includes(search.toLowerCase()) ||
+          item.descriptionChatGpt
             ?.toLowerCase()
-            .includes(searchTerms.toLowerCase()) ||
-          item.topicTitle.toLowerCase().includes(searchTerms.toLowerCase()) ||
-          item.categoryTitle.toLowerCase().includes(searchTerms.toLowerCase()),
+            .includes(search.toLowerCase()) ||
+          item.categoryTitle?.toLowerCase().includes(search.toLowerCase()),
       );
     }
     return apps;
   };
 
-  const filterTopicsBySearch = (search) => {
+  const filterTagsBySearch = (search) => {
     if (search) {
-      return topics.filter((item) =>
-        item.title.toLowerCase().includes(searchTerms.toLowerCase()),
+      return tags.filter((item) =>
+        item.title.toLowerCase().includes(search.toLowerCase()),
       );
     }
-    return topics;
+    return tags;
   };
 
   const filterCategoriesBySearch = (search) => {
     if (search) {
       return categories.filter((item) =>
-        item.title.toLowerCase().includes(searchTerms.toLowerCase()),
+        item.title.toLowerCase().includes(search.toLowerCase()),
       );
     }
     return categories;
   };
 
-  const resultsHomeApps = filterAppsBySearch(searchTerms);
-  const resultsHomeTopics = filterTopicsBySearch(searchTerms);
+  const resultsHomeProducts = filterProductsBySearch(searchTerms);
+  const resultsHomeTags = filterTagsBySearch(searchTerms);
   const resultsHomeCategories = filterCategoriesBySearch(searchTerms);
 
   const handleSearch = (event) => {
@@ -164,9 +166,9 @@ export const Navigation = () => {
     }
   }, [hamburgerOpen, hamburgerUserOpen]);
 
-  const dropDownResultsApps = resultsHomeApps?.map((result) => (
+  const dropDownResultsProducts = resultsHomeProducts?.map((result) => (
     <Link
-      to={`/deals/app/${result.id}`}
+      to={`/products/${result.slug}`}
       /* state={{ frontPageItem: relatedTopics }} */
       onClick={() => toggleSearchModal()}
     >
@@ -174,9 +176,9 @@ export const Navigation = () => {
     </Link>
   ));
 
-  const dropDownResultsTopics = resultsHomeTopics?.map((result) => (
+  const dropDownResultsTags = resultsHomeTags?.map((result) => (
     <Link
-      to={`/deals/topic/${result.id}`}
+      to={`/products/tags/${result.slug}`}
       /* state={{ frontPageItem: relatedTopics }} */
       onClick={() => toggleSearchModal()}
     >
@@ -184,15 +186,15 @@ export const Navigation = () => {
     </Link>
   ));
 
-  // const dropDownResultsCategories = resultsHomeCategories?.map((result) => (
-  //   <Link
-  //     to={`/deals/category/${result.id}`}
-  //     /* state={{ frontPageItem: relatedTopics }} */
-  //     onClick={() => toggleSearchModal()}
-  //   >
-  //     <li key={result.id}>{result.title}</li>
-  //   </Link>
-  // ));
+  const dropDownResultsCategories = resultsHomeCategories?.map((result) => (
+    <Link
+      to={`/products/category/${result.slug}`}
+      /* state={{ frontPageItem: relatedTopics }} */
+      onClick={() => toggleSearchModal()}
+    >
+      <li key={result.id}>{result.title}</li>
+    </Link>
+  ));
 
   return (
     <>
@@ -506,25 +508,24 @@ export const Navigation = () => {
         </form>
         {searchTerms ? (
           <div className="dropdown-search-modal">
-            <h3>Apps</h3>
+            <h3>Products</h3>
             <ul>
-              {dropDownResultsApps.length > 0 ? (
-                dropDownResultsApps
+              {dropDownResultsProducts.length > 0 ? (
+                dropDownResultsProducts
               ) : (
-                <li>No apps found :(</li>
+                <li>No products found :(</li>
               )}
             </ul>
-            {dropDownResultsTopics.length > 0 && (
-              <>
-                <h3>Topics</h3>
-                <ul>{dropDownResultsTopics}</ul>
-              </>
-            )}
-
             {dropDownResultsCategories.length > 0 && (
               <>
                 <h3>Categories</h3>
                 <ul>{dropDownResultsCategories}</ul>
+              </>
+            )}
+            {dropDownResultsTags.length > 0 && (
+              <>
+                <h3>Tags</h3>
+                <ul>{dropDownResultsTags}</ul>
               </>
             )}
           </div>
