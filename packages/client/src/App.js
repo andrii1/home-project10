@@ -20,6 +20,7 @@ import { PageNotFound } from './containers/PageNotFound/PageNotFound.Container';
 import { Navigation } from './components/Navigation/Navigation.component';
 import { Footer } from './components/Footer/Footer.component';
 import { UserProvider } from './userContext';
+import { Tags } from './containers/Tags/Tags.Container';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/test" element={<Prompts />} />
             <Route path="/categories" element={<Categories />} />
+            <Route path="/tags" element={<Tags />} />
             <Route exact path="/products/:slug" element={<ProductView />} />
             <Route path="/products/*" element={<Products />} />
             <Route

@@ -106,8 +106,6 @@ export const Navigation = () => {
     fetchCategories();
   }, []);
 
-  console.log('products', apps);
-
   const filterProductsBySearch = (search) => {
     if (search) {
       return apps.filter(
