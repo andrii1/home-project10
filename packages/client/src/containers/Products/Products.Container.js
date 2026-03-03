@@ -712,6 +712,12 @@ export const Products = () => {
     } else if (sortOrder === 'Z-A') {
       column = 'title';
       direction = 'desc';
+    } else if (sortOrder === 'Price (low to high)') {
+      column = 'price';
+      direction = 'asc';
+    } else if (sortOrder === 'Price (high to low)') {
+      column = 'price';
+      direction = 'desc';
     } else {
       column = 'id';
       direction = 'desc';
@@ -720,7 +726,13 @@ export const Products = () => {
     setOrderBy({ column, direction });
   }, [sortOrder]);
 
-  const sortOptions = ['Recent', 'A-Z', 'Z-A'];
+  const sortOptions = [
+    'Recent',
+    'A-Z',
+    'Z-A',
+    'Price (low to high)',
+    'Price (high to low)',
+  ];
 
   const pricingList = PRICING_OPTIONS.map((item) => (
     <li key={item.key}>
