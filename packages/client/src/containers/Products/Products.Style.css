@@ -342,6 +342,21 @@ form.home {
     top: 26.5rem;
     min-width: 20rem;
   }
+  .container-form {
+    flex-direction: column;
+  }
+  .selector-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .container-details-section.show,
+  .container-topics-section.show {
+    margin: 2rem auto;
+    width: 90%;
+  }
 }
 
 @media only screen and (min-width: 768px) and (max-width: 992px) {

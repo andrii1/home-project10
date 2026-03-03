@@ -1125,7 +1125,7 @@ export const Products = () => {
       >
         <div className="container-details filters">
           <div className="container-form">
-            <div>
+            <div className="selector-group">
               <h3>Features</h3>
               <MultiSelectDropdown
                 options={features}
@@ -1137,7 +1137,7 @@ export const Products = () => {
                 title="features"
               />
             </div>
-            <div>
+            <div className="selector-group">
               <h3>User types</h3>
               <MultiSelectDropdown
                 options={userTypes}
@@ -1149,7 +1149,7 @@ export const Products = () => {
                 title="userTypes"
               />
             </div>
-            <div>
+            <div className="selector-group">
               <h3>Occasions</h3>
               <MultiSelectDropdown
                 options={occasions}
@@ -1161,7 +1161,7 @@ export const Products = () => {
                 title="occasions"
               />
             </div>
-            <div>
+            <div className="selector-group">
               <h3>Use cases</h3>
               <MultiSelectDropdown
                 options={useCases}
@@ -1173,7 +1173,7 @@ export const Products = () => {
                 title="useCases"
               />
             </div>
-            <div>
+            <div className="selector-group">
               <h3>Industries</h3>
               <MultiSelectDropdown
                 options={industries}
