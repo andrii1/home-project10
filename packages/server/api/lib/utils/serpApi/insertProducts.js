@@ -9,25 +9,17 @@ const fetchSerpApiAmazon = require('./serpApiAmazon');
 const USER_UID = process.env.USER_UID_AMAZON_PROD;
 const API_PATH = process.env.API_PATH_AMAZON_PROD;
 
-// const today = new Date();
-// const isSunday = today.getDay() === 0; // 0 = Sunday
-
-// if (!isSunday) {
-//   console.log('Not Sunday, skipping weekly job.');
-//   process.exit(0);
-// }
-
 // fetch helpers
 
-const today = new Date();
-const todayDay = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+// const today = new Date();
+// const todayDay = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-const allowedDays = [0, 3, 4, 5];
+// const allowedDays = [0, 3, 4, 5];
 
-if (!allowedDays.includes(todayDay)) {
-  console.log('Not an allowed day, skipping job.');
-  process.exit(0);
-}
+// if (!allowedDays.includes(todayDay)) {
+//   console.log('Not an allowed day, skipping job.');
+//   process.exit(0);
+// }
 
 async function insertCategory(title, categoryNodeId) {
   const res = await fetch(`${API_PATH}/categories`, {
