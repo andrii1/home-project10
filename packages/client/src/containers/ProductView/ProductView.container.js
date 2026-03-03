@@ -679,7 +679,7 @@ export const ProductView = () => {
   return (
     <>
       <Helmet>
-        <title>{`${product?.title} - Try Top Products`}</title>
+        <title>{`${product?.title} - Catch Daily Deals`}</title>
         <meta
           name="description"
           content={

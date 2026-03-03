@@ -55,16 +55,15 @@ export const getPageMeta = ({ filterConfig }) => {
     const capitalizedLong = capitalizeFirstWord(allTitles.join(', '));
 
     return {
-      pageMetaTitle: `${capitalizedLong} products - Try Top Products`,
-      pageMetaDescription: `${capitalizedLong} products - reviews, how to use, tutorials, deals, promo codes, errors.`,
+      pageMetaTitle: `${capitalizedLong} products - Catch Daily Deals`,
+      pageMetaDescription: `${capitalizedLong} products - deals, reviews, promos.`,
       pageHeaderTitle: `${capitalizedShort} products`,
     };
   }
 
   return {
-    pageMetaTitle: 'Try Top Products - find best products',
-    pageMetaDescription:
-      'Reviews, how to use, tutorials, deals, promo codes, errors.',
+    pageMetaTitle: 'Catch Daily Deals - find best products',
+    pageMetaDescription: 'Reviews, deals, promos.',
     pageHeaderTitle: 'Find best products',
   };
 };
