@@ -1033,26 +1033,6 @@ export const Products = () => {
         </section>
       )}
       <section className="container-filters">
-        <Button
-          secondary
-          className="button-topics"
-          onClick={(event) =>
-            setShowCategoriesContainer(!showCategoriesContainer)
-          }
-          backgroundColor="#ffe5d9"
-          label="Categories"
-        />
-        <Button
-          secondary
-          className="button-topics"
-          onClick={(event) => {
-            setShowTagsContainer(!showTagsContainer);
-            setShowCategoriesContainer(false);
-            setShowSearchContainer(false);
-          }}
-          backgroundColor="#ffe5d9"
-          label="Tags"
-        />
         {/* <Button
           secondary
           className="button-topics"
@@ -1078,6 +1058,28 @@ export const Products = () => {
           backgroundColor="#ffe5d9"
           label="Filters"
           icon={<ListFilter size={18} />}
+        />
+        <Button
+          secondary
+          className="button-topics"
+          onClick={(event) => {
+            setShowCategoriesContainer(!showCategoriesContainer);
+            setShowTagsContainer(false);
+            setShowSearchContainer(false);
+          }}
+          backgroundColor="#ffe5d9"
+          label="Categories"
+        />
+        <Button
+          secondary
+          className="button-topics"
+          onClick={(event) => {
+            setShowTagsContainer(!showTagsContainer);
+            setShowCategoriesContainer(false);
+            setShowSearchContainer(false);
+          }}
+          backgroundColor="#ffe5d9"
+          label="Tags"
         />
         {/* <Button
           secondary
