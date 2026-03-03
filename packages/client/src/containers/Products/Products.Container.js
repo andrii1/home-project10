@@ -1136,6 +1136,8 @@ export const Products = () => {
                 labelKey="title"
                 title="features"
               />
+            </div>
+            <div>
               <h3>User types</h3>
               <MultiSelectDropdown
                 options={userTypes}
@@ -1146,6 +1148,8 @@ export const Products = () => {
                 labelKey="title"
                 title="userTypes"
               />
+            </div>
+            <div>
               <h3>Occasions</h3>
               <MultiSelectDropdown
                 options={occasions}
@@ -1156,6 +1160,8 @@ export const Products = () => {
                 labelKey="title"
                 title="occasions"
               />
+            </div>
+            <div>
               <h3>Use cases</h3>
               <MultiSelectDropdown
                 options={useCases}
@@ -1166,6 +1172,8 @@ export const Products = () => {
                 labelKey="title"
                 title="useCases"
               />
+            </div>
+            <div>
               <h3>Industries</h3>
               <MultiSelectDropdown
                 options={industries}
@@ -1177,7 +1185,8 @@ export const Products = () => {
                 title="industries"
               />
             </div>
-            <div>
+
+            {/* <div>
               <h3>Pricing</h3>
               <ul className="filter-list">{pricingList}</ul>
             </div>
@@ -1192,7 +1201,7 @@ export const Products = () => {
             <div>
               <h3>Other</h3>
               <ul className="filter-list">{otherList}</ul>
-            </div>
+            </div> */}
           </div>
         </div>
         <Button
