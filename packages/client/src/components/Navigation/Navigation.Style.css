@@ -346,6 +346,82 @@ ul li,
   border-top: 1px solid #ddd;
 }
 
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  background-color: #fff;
+  min-width: 11.25rem;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 0.5rem;
+}
+
+/* First item hover matches top border radius */
+.dropdown-content a:first-child:hover,
+.dropdown-content div:first-child:hover {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+/* Last item hover matches bottom border radius */
+.dropdown-content a:last-child:hover,
+.dropdown-content div:last-child:hover {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.dropdown-content.dropdown-profile {
+  position: absolute;
+  top: 2.4rem;
+  right: 0rem;
+}
+
+.dropdown-content.dropdown-menu {
+  position: absolute;
+  top: 1.25rem;
+  right: 0rem;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a,
+.dropdown-content div {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover,
+.dropdown-content div:hover {
+  background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.container-logged-in:hover .dropdown-content {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown-content:hover .dropdown-content {
+  display: block;
+}
+
+.menu-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.menu-dropdown {
+  position: relative;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown-content:hover .dropdown-content {
+  display: block;
+}
+
 @media only screen and (max-width: 1150px) {
   li.hide-on-tablet {
     display: none;

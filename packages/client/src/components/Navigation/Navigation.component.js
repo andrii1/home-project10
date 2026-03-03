@@ -404,7 +404,18 @@ export const Navigation = () => {
                 </label>
               </form>
             </li>
-            <li className="hide-on-tablet">
+            <li className="menu-dropdown">
+              Menu
+              <div className="dropdown-content dropdown-menu">
+                <NavLink to="/categories" className="nav-link">
+                  Categories
+                </NavLink>
+                <NavLink to="/tags" className="nav-link">
+                  Tags
+                </NavLink>
+              </div>
+            </li>
+            {/* <li className="hide-on-tablet">
               <NavLink to="/categories" className="nav-link">
                 Categories
               </NavLink>
@@ -413,7 +424,7 @@ export const Navigation = () => {
               <NavLink to="/tags" className="nav-link">
                 Tags
               </NavLink>
-            </li>
+            </li> */}
             {/* <li className="hide-on-tablet">
               <NavLink to="/all-apps" className="nav-link">
                 Apps
