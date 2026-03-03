@@ -6,15 +6,15 @@ export const Footer = () => {
   return (
     <div className="footer">
       <div className="menu">
-        <ul>
+        {/* <ul>
           <li>
             <NavLink to="/faq" className="nav-link">
               FAQ
             </NavLink>
           </li>
-        </ul>
+        </ul> */}
       </div>
-      <span>&copy;2025</span>
+      <span>&copy; {new Date().getFullYear()}</span>
     </div>
   );
 };
