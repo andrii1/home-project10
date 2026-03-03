@@ -665,11 +665,7 @@ export const Products = () => {
     );
   });
 
-  const randomTags = [...tags] // clone (don’t mutate original)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 20);
-
-  const tagsList = randomTags.map((tag) => {
+  const tagsList = tags.slice(0, 20).map((tag) => {
     return (
       <Button
         onClick={() => filterHandler('tags', tag.slug)}
@@ -1057,7 +1053,7 @@ export const Products = () => {
           backgroundColor="#ffe5d9"
           label="Tags"
         />
-        <Button
+        {/* <Button
           secondary
           className="button-topics"
           onClick={(event) => {
@@ -1067,7 +1063,7 @@ export const Products = () => {
           }}
           backgroundColor="#ffe5d9"
           label="Searches"
-        />
+        /> */}
         <DropDownView
           selectedOptionValue={sortOrder}
           className="no-line-height"
@@ -1083,7 +1079,7 @@ export const Products = () => {
           label="Filters"
           icon={<ListFilter size={18} />}
         />
-        <Button
+        {/* <Button
           secondary
           onClick={() => setListView(!listView)}
           backgroundColor="#ffe5d9"
@@ -1092,7 +1088,7 @@ export const Products = () => {
             <FontAwesomeIcon size="lg" icon={faGrip} />
             <FontAwesomeIcon icon={faList} />
           </div>
-        </Button>
+        </Button> */}
       </section>
       <section
         className={`container-topics-mobile ${
@@ -1107,6 +1103,18 @@ export const Products = () => {
         />
 
         {categoriesList}
+      </section>
+      <section
+        className={`container-topics-mobile ${showTagsContainer && 'show'}`}
+      >
+        <Button
+          primary={!filteredTags.length > 0}
+          secondary={filteredTags.length > 0}
+          label="All tags"
+          onClick={filterHandlerAllTags}
+        />
+
+        {tagsList}
       </section>
       <section
         className={`container-details-section ${
