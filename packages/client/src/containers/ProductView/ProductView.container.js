@@ -94,7 +94,7 @@ export const ProductView = () => {
   const [animation, setAnimation] = useState('');
   const [id, setId] = useState(null);
   const [favorites, setFavorites] = useState([]);
-  const [topicsFromDeals, setTopicsFromDeals] = useState([]);
+  const [topicsFromProducts, setTopicsFromProducts] = useState([]);
   const navigate = useNavigate();
   const [product, setProduct] = useState({});
   const [dealCodes, setDealCodes] = useState([]);
@@ -378,44 +378,40 @@ export const ProductView = () => {
     return date.toISOString().split('T')[0];
   };
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     setLoading(true);
-  //     const results = [];
-  //     const combinedText = `${product?.description} ${product?.description_long} ${product?.productDescription}`;
-  //     const words = getMostUsedWords(combinedText, 10);
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      const results = [];
+      const combinedText = `${product?.title} ${product?.description} ${product?.descriptionChatGpt}`;
+      const words = getMostUsedWords(combinedText, 10);
 
-  //     for (const [word] of words) {
-  //       try {
-  //         const res = await fetch(
-  //           `${apiURL()}/products?page=0&column=id&direction=desc&search=${encodeURIComponent(
-  //             word,
-  //           )}`,
-  //         );
-  //         const data = await res.json();
-  //         if (data.data.length > 1) {
-  //           const wordWithLink = {
-  //             title: word,
-  //             url: `products/search/${word}`,
-  //           };
-  //           results.push(wordWithLink);
-  //         }
-  //       } catch (err) {
-  //         return;
-  //       }
-  //     }
+      for (const [word] of words) {
+        try {
+          const res = await fetch(
+            `${apiURL()}/products?page=0&column=id&direction=desc&search=${encodeURIComponent(
+              word,
+            )}`,
+          );
+          const data = await res.json();
+          if (data.data.length > 1) {
+            const wordWithLink = {
+              title: word,
+              url: `products/search/${word}`,
+            };
+            results.push(wordWithLink);
+          }
+        } catch (err) {
+          return;
+        }
+      }
 
-  //     setTopicsFromDeals(results);
-  //     setLoading(false);
-  //   }
-  //   if (product?.description) {
-  //     fetchData();
-  //   }
-  // }, [
-  //   product.description,
-  //   product.description_long,
-  //   product.productDescription,
-  // ]);
+      setTopicsFromProducts(results);
+      setLoading(false);
+    }
+    if (product?.title) {
+      fetchData();
+    }
+  }, [product?.description, product?.descriptionChatGpt, product?.title]);
 
   const cardItems = similarProducts.map((item) => {
     // const relatedTopics = topics
@@ -1181,12 +1177,12 @@ export const ProductView = () => {
                 </div>
               </div>
             </div>
-            {topicsFromDeals.length > 0 && (
+            {topicsFromProducts.length > 0 && (
               <div className="container-tags">
                 <div className="badges">
                   <p className="p-no-margin">Related topics: </p>
                   <div className="badges-keywords">
-                    {topicsFromDeals.map((topic, index) => (
+                    {topicsFromProducts.map((topic, index) => (
                       <Link to={`../../${topic.url}`}>
                         <Button secondary label={topic.title} size="small" />
                       </Link>
@@ -1376,12 +1372,12 @@ export const ProductView = () => {
               <div className="container-cards small-cards">{cardItems}</div>
             </div>
           )}
-          {searches.length > 0 && (
+          {/* {searches.length > 0 && (
             <div className="container-alternatives">
               <h2>🔎 Related searches</h2>
               <div className="container-related-searches">{searchItems}</div>
             </div>
-          )}
+          )} */}
         </section>
         <Modal title={modalTitle} open={openModal} toggle={toggleModal}>
           <Link to="/signup">
