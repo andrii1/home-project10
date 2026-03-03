@@ -71,7 +71,7 @@ export const Bookmarks = () => {
       </Helmet>
       <main>
         <h1 className="hero-header">Bookmarks</h1>
-        {favoritesList}
+        {favoritesList.length > 0 ? favoritesList : <p>No bookmarks yet</p>}
       </main>
     </>
   );

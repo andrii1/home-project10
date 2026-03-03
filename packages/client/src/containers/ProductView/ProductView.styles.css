@@ -347,6 +347,10 @@ span.underline:hover {
   top: -0.3em;
 }
 
+.product-description {
+  text-align: justify;
+}
+
 @media only screen and (max-width: 768px) {
   .badges {
     align-items: self-start;
