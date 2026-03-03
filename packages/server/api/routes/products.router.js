@@ -35,7 +35,7 @@ router.get('/', (req, res, next) => {
     req.query.tags ||
     req.query.features ||
     req.query.userTypes ||
-    req.query.businessModels ||
+    req.query.occasions ||
     req.query.useCases ||
     req.query.industries
   ) {
@@ -54,7 +54,7 @@ router.get('/', (req, res, next) => {
         tags: req.query.tags,
         features: req.query.features,
         userTypes: req.query.userTypes,
-        businessModels: req.query.businessModels,
+        occasions: req.query.occasions,
         useCases: req.query.useCases,
         industries: req.query.industries,
       })

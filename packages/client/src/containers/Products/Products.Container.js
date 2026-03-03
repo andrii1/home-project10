@@ -165,7 +165,7 @@ export const Products = () => {
       params.append('userTypes', filteredUserTypes.join(','));
     }
 
-    // Business models
+    // Occasions
     if (filteredOccasions.length > 0) {
       params.append('occasions', filteredOccasions.join(','));
     }
@@ -1146,12 +1146,12 @@ export const Products = () => {
                 labelKey="title"
                 title="userTypes"
               />
-              <h3>Business Models</h3>
+              <h3>Occasions</h3>
               <MultiSelectDropdown
                 options={occasions}
                 selected={filteredOccasions}
                 onChange={filterHandler}
-                placeholder="Select business models"
+                placeholder="Select occasions"
                 valueKey="slug"
                 labelKey="title"
                 title="occasions"
