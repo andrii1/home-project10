@@ -11,15 +11,15 @@ const API_PATH = process.env.API_PATH_AMAZON_PROD;
 
 // fetch helpers
 
-// const today = new Date();
-// const todayDay = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+const today = new Date();
+const todayDay = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-// const allowedDays = [0, 3, 4, 5];
+const allowedDays = [0, 1, 2, 3, 4, 5];
 
-// if (!allowedDays.includes(todayDay)) {
-//   console.log('Not an allowed day, skipping job.');
-//   process.exit(0);
-// }
+if (!allowedDays.includes(todayDay)) {
+  console.log('Not an allowed day, skipping job.');
+  process.exit(0);
+}
 
 async function insertCategory(title, categoryNodeId) {
   const res = await fetch(`${API_PATH}/categories`, {
