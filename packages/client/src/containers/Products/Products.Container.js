@@ -41,7 +41,7 @@ import globe from '../../assets/images/globe.svg';
 import { logInWithEmailAndPassword } from '../../firebase';
 import MultiSelectDropdown from '../../components/MultiSelectDropdown/MultiSelectDropdown.component';
 
-const tabs = ['Categories', 'Tags', 'Searches'];
+const tabs = ['Categories', 'Tags'];
 
 export const Products = () => {
   const { user } = useUserContext();
@@ -665,7 +665,11 @@ export const Products = () => {
     );
   });
 
-  const tagsList = tags.map((tag) => {
+  const randomTags = [...tags] // clone (don’t mutate original)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 20);
+
+  const tagsList = randomTags.map((tag) => {
     return (
       <Button
         onClick={() => filterHandler('tags', tag.slug)}
