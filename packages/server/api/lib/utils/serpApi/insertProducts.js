@@ -6,8 +6,8 @@ require('dotenv').config();
 const fetchSerpApiAmazon = require('./serpApiAmazon');
 
 // Credentials (from .env)
-const USER_UID = process.env.USER_UID_AMAZON_PROD;
-const API_PATH = process.env.API_PATH_AMAZON_PROD;
+const USER_UID = process.env.USER_UID_AMAZON_LOCAL;
+const API_PATH = process.env.API_PATH_AMAZON_LOCAL;
 
 // fetch helpers
 

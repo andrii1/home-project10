@@ -4,6 +4,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* TODO: This is an example controller to illustrate a server side controller.
 Can be deleted as soon as the first real controller is added. */
+require('dotenv').config();
 const generateSlug = require('../lib/utils/generateSlug');
 const capitalize = require('../lib/utils/capitalize');
 
