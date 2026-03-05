@@ -86,7 +86,7 @@ export const Card = ({
         <div className="card-header">
           <div className="card-title">
             <Link to={cardUrl}>
-              <h2>{title.split(' ').slice(0, 10).join(' ')}</h2>
+              <h2>{title.split(' ').slice(0, 8).join(' ')}</h2>
             </Link>
           </div>
           {/* <Badge label={appTitle} size="small" /> */}
