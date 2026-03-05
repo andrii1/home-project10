@@ -230,15 +230,14 @@ const getProductsBy = async (params) => {
 
   const applyManyToManyFilter = (qb, valueCSV, joinTable, targetTable, key) => {
     if (!valueCSV) return;
+
     const arr = valueCSV.split(',');
+    const foreignKey = foreignKeyMap[key];
+
     qb.whereIn('products.id', function () {
       this.select(`${joinTable}.product_id`)
         .from(joinTable)
-        .join(
-          targetTable,
-          `${joinTable}.${key.slice(0, -1)}_id`,
-          `${targetTable}.id`,
-        )
+        .join(targetTable, `${joinTable}.${foreignKey}`, `${targetTable}.id`)
         .whereIn(`${targetTable}.slug`, arr);
     });
   };
@@ -250,6 +249,15 @@ const getProductsBy = async (params) => {
     occasions: 'occasions',
     useCases: 'useCases',
     industries: 'industries',
+  };
+
+  const foreignKeyMap = {
+    tags: 'tag_id',
+    features: 'feature_id',
+    userTypes: 'userType_id',
+    occasions: 'occasion_id',
+    useCases: 'useCase_id',
+    industries: 'industry_id',
   };
 
   const joinMap = {
