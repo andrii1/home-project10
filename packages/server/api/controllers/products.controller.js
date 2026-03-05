@@ -680,7 +680,6 @@ const editProduct = async (token, updatedProductId, body) => {
 
 module.exports = {
   getProductsBy,
-
   getProductById,
   getProductsAll,
   // createProducts,
