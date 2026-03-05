@@ -212,7 +212,7 @@ export const Products = () => {
       const json = await response.json();
 
       let hasMore = true;
-      if (json.data.some((item) => item.id === json.lastItem.id)) {
+      if (json.data?.some((item) => item.id === json.lastItem.id)) {
         hasMore = false;
       }
 
@@ -331,7 +331,7 @@ export const Products = () => {
 
     let hasMore = true;
 
-    if (json.data.some((item) => item.id === json.lastItem.id)) {
+    if (json.data?.some((item) => item.id === json.lastItem.id)) {
       hasMore = false;
     }
 
@@ -718,6 +718,12 @@ export const Products = () => {
     } else if (sortOrder === 'Price (high to low)') {
       column = 'price';
       direction = 'desc';
+    } else if (sortOrder === 'Highest rated') {
+      column = 'highestRated';
+      direction = 'desc';
+    } else if (sortOrder === 'Most bookmarked') {
+      column = 'mostBookmarked';
+      direction = 'desc';
     } else {
       column = 'id';
       direction = 'desc';
@@ -732,6 +738,8 @@ export const Products = () => {
     'Z-A',
     'Price (low to high)',
     'Price (high to low)',
+    'Highest rated',
+    'Most bookmarked',
   ];
 
   const pricingList = PRICING_OPTIONS.map((item) => (
