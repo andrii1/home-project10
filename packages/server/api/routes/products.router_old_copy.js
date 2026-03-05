@@ -37,8 +37,7 @@ router.get('/', (req, res, next) => {
     req.query.userTypes ||
     req.query.occasions ||
     req.query.useCases ||
-    req.query.industries ||
-    req.query.page
+    req.query.industries
   ) {
     // const array = req.query.filteredTopics.split(',');
     productsController
@@ -59,6 +58,45 @@ router.get('/', (req, res, next) => {
         useCases: req.query.useCases,
         industries: req.query.industries,
       })
+      .then((result) => res.json(result))
+      .catch(next);
+  }
+  // else if (req.query.filteredCategories) {
+  //   const array = req.query.filteredCategories.split(',');
+  //   productsController
+  //     .getProductsByCategory(
+  //       req.query.filteredCategories,
+  //       req.query.page,
+  //       req.query.column,
+  //       req.query.direction,
+  //     )
+  //     .then((result) => res.json(result))
+  //     .catch(next);
+  // } else if (req.query.search) {
+  //   productsController
+  //     .getProductsSearch(
+  //       req.query.search,
+  //       req.query.column,
+  //       req.query.direction,
+  //       req.query.page,
+  //       req.query.size,
+  //     )
+  //     .then((result) => res.json(result))
+  //     .catch(next);
+  // }
+  else if (req.query.tag) {
+    productsController
+      .getProductsByTag(
+        req.query.page,
+        req.query.column,
+        req.query.direction,
+        req.query.tag,
+      )
+      .then((result) => res.json(result))
+      .catch(next);
+  } else if (req.query.page) {
+    productsController
+      .getProducts(req.query.page, req.query.column, req.query.direction)
       .then((result) => res.json(result))
       .catch(next);
   } else {

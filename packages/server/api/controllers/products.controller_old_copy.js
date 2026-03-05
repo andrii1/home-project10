@@ -1,5 +1,3 @@
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable one-var */
 /* eslint-disable no-console */
@@ -166,6 +164,165 @@ const getProductsAll = async () => {
   }
 };
 
+const getProducts = async (page, column, direction) => {
+  const lastItemDirection = getOppositeOrderDirection(direction);
+  try {
+    const getModel = () =>
+      knex('products')
+        .select(
+          'products.*',
+          'categories.title as categoryTitle',
+          'categories.slug as categorySlug',
+        )
+        .join('categories', 'products.category_id', '=', 'categories.id');
+    const lastItem = await getModel()
+      .orderBy(column, lastItemDirection)
+      .limit(1);
+    const data = await getModel()
+      .orderBy(column, direction)
+      .offset(page * 10)
+      .limit(10)
+      .select();
+    return {
+      lastItem: lastItem[0],
+      data,
+    };
+  } catch (error) {
+    return error.message;
+  }
+};
+
+const getProductsPagination = async (column, direction, page, size) => {
+  try {
+    const getModel = () =>
+      knex('products')
+        .select(
+          'products.*',
+          'categories.title as categoryTitle',
+          'categories.slug as categorySlug',
+        )
+        .join('categories', 'products.category_id', '=', 'categories.id')
+        .orderBy(column, direction);
+    const totalCount = await getModel()
+      .count('products.id', { as: 'rows' })
+      .groupBy('products.id');
+    const data = await getModel()
+      .offset(page * size)
+      .limit(size)
+      .select();
+    const dataExport = await getModel().select();
+
+    return {
+      totalCount: totalCount.length,
+      data,
+      dataExport,
+    };
+  } catch (error) {
+    return error.message;
+  }
+};
+
+const getProductsSearch = async (search, column, direction, page, size) => {
+  try {
+    const getModel = () =>
+      knex('products')
+        .select('products.*', 'categories.title as categoryTitle')
+        .join('categories', 'products.category_id', '=', 'categories.id')
+        .orderBy(column, direction)
+        .where('products.title', 'like', `%${search}%`);
+    const totalCount = await getModel()
+      .count('products.id', { as: 'rows' })
+      .groupBy('products.id');
+    const data = await getModel()
+      .offset(page * size)
+      .limit(size)
+      .select();
+    const dataExport = await getModel().select();
+
+    return {
+      totalCount: totalCount.length,
+      data,
+      dataExport,
+    };
+  } catch (error) {
+    return error.message;
+  }
+};
+
+const getProductsByCategories = async (categories) => {
+  try {
+    const products = await knex('products')
+      .select('products.*', 'categories.title as categoryTitle')
+      .join('categories', 'products.category_id', '=', 'categories.id')
+      .whereIn('category_id', categories);
+
+    return products;
+  } catch (error) {
+    return error.message;
+  }
+};
+
+const getProductsByCategory = async (category, page, column, direction) => {
+  const lastItemDirection = getOppositeOrderDirection(direction);
+  try {
+    const getModel = () =>
+      knex('products')
+        .select('products.*', 'categories.title as categoryTitle')
+        .join('categories', 'products.category_id', '=', 'categories.id')
+        .where({
+          'products.category_id': category,
+        });
+
+    const lastItem = await getModel()
+      .orderBy(column, lastItemDirection)
+      .limit(1);
+    const data = await getModel()
+      .orderBy(column, direction)
+      .offset(page * 10)
+      .limit(10)
+      .select();
+    return {
+      lastItem: lastItem[0],
+      data,
+    };
+  } catch (error) {
+    return error.message;
+  }
+};
+
+const getProductsByTag = async (page, column, direction, tag) => {
+  const lastItemDirection = getOppositeOrderDirection(direction);
+  try {
+    const getModel = () =>
+      knex('products')
+        .select(
+          'products.*',
+          'categories.title as categoryTitle',
+          'tags.id as tagId',
+          'tags.slug as tagSlug',
+          'tags.title as tagTitle',
+        )
+        .join('categories', 'products.category_id', '=', 'categories.id')
+        .join('tagsProducts', 'tagsProducts.product_id', '=', 'products.id')
+        .join('tags', 'tags.id', '=', 'tagsProducts.tag_id')
+        .where('tags.slug', '=', `${tag}`);
+    const lastItem = await getModel()
+      .orderBy(column, lastItemDirection)
+      .limit(1);
+    const data = await getModel()
+      .orderBy(column, direction)
+      .offset(page * 10)
+      .limit(10)
+      .select();
+    return {
+      lastItem: lastItem[0],
+      data,
+    };
+  } catch (error) {
+    return error.message;
+  }
+};
+
 const pricingFiltersMap = {
   free: (qb) => qb.orWhere('products.pricing_free', true),
   freemium: (qb) => qb.orWhere('products.pricing_freemium', true),
@@ -195,100 +352,82 @@ const otherFiltersMap = {
   ai: (qb) => qb.orWhere('products.is_ai_powered', true),
 };
 
-const getProductsBy = async (params) => {
-  const {
-    page = 0,
-    column = 'id',
-    direction = 'asc',
-    categories,
-    pricing,
-    platforms,
-    socials,
-    other,
-    search,
-    tags,
-    features,
-    userTypes,
-    occasions,
-    useCases,
-    industries,
-  } = params;
-
-  const lastItemDirection = direction === 'asc' ? 'desc' : 'asc';
-
-  // --- Helper functions ---
-  const applyMappedFilter = (qb, valueCSV, map) => {
-    if (!valueCSV) return;
-    const arr = valueCSV.split(',');
-    qb.where(function () {
-      arr.forEach((item) => {
-        const fn = map[item];
-        if (fn) fn(this);
-      });
-    });
-  };
-
-  const applyManyToManyFilter = (qb, valueCSV, joinTable, targetTable, key) => {
-    if (!valueCSV) return;
-    const arr = valueCSV.split(',');
-    qb.whereIn('products.id', function () {
-      this.select(`${joinTable}.product_id`)
-        .from(joinTable)
-        .join(
-          targetTable,
-          `${joinTable}.${key.slice(0, -1)}_id`,
-          `${targetTable}.id`,
-        )
-        .whereIn(`${targetTable}.slug`, arr);
-    });
-  };
-
-  const tableMap = {
-    tags: 'tags',
-    features: 'features',
-    userTypes: 'userTypes',
-    occasions: 'occasions',
-    useCases: 'useCases',
-    industries: 'industries',
-  };
-
-  const joinMap = {
-    tags: 'tagsProducts',
-    features: 'featuresProducts',
-    userTypes: 'userTypesProducts',
-    occasions: 'occasionsProducts',
-    useCases: 'useCasesProducts',
-    industries: 'industriesProducts',
-  };
-
+const getProductsBy = async ({
+  page,
+  column,
+  direction,
+  categories,
+  pricing,
+  platforms,
+  socials,
+  other,
+  search,
+  tags,
+  features,
+  userTypes,
+  occasions,
+  useCases,
+  industries,
+}) => {
+  const lastItemDirection = getOppositeOrderDirection(direction);
   try {
-    // --- Base query ---
-    const getModel = () => {
-      return knex('products')
+    const getModel = () =>
+      knex('products')
         .select(
           'products.*',
           'categories.title as categoryTitle',
           'categories.slug as categorySlug',
-          knex.raw(`COUNT(DISTINCT favorites.id) as favoritesCount`),
-          knex.raw(`COUNT(DISTINCT ratings.id) as ratingsCount`),
         )
-        .leftJoin('categories', 'products.category_id', 'categories.id')
-        .leftJoin('favorites', 'products.id', 'favorites.product_id')
-        .leftJoin('ratings', 'products.id', 'ratings.product_id')
-        .groupBy('products.id', 'categories.title', 'categories.slug')
-        .modify((qb) => {
-          // --- Simple filters ---
-          if (categories) qb.whereIn('categories.slug', categories.split(','));
-          applyMappedFilter(qb, pricing, pricingFiltersMap);
-          applyMappedFilter(qb, platforms, platformsFiltersMap);
-          applyMappedFilter(qb, socials, socialMediaFiltersMap);
-          applyMappedFilter(qb, other, otherFiltersMap);
+        .join('categories', 'products.category_id', '=', 'categories.id')
+        .modify((queryBuilder) => {
+          if (categories !== undefined) {
+            const categoriesArray = categories.split(',');
+            queryBuilder.whereIn('categories.slug', categoriesArray);
+          }
+          if (pricing !== undefined) {
+            const pricingArray = pricing.split(',');
+            queryBuilder.where(function () {
+              pricingArray.forEach((pricingItem) => {
+                const filterFn = pricingFiltersMap[pricingItem];
+                if (filterFn) filterFn(this);
+              });
+            });
+          }
 
-          // --- Search ---
-          if (search) {
-            const arr = search.split(',');
-            qb.where(function () {
-              arr.forEach((term) => {
+          if (platforms !== undefined) {
+            const platformsArray = platforms.split(',');
+            queryBuilder.where(function () {
+              platformsArray.forEach((platform) => {
+                const filterFn = platformsFiltersMap[platform];
+                if (filterFn) filterFn(this);
+              });
+            });
+          }
+
+          if (socials !== undefined) {
+            const socialsArray = socials.split(',');
+            queryBuilder.where(function () {
+              socialsArray.forEach((social) => {
+                const filterFn = socialMediaFiltersMap[social];
+                if (filterFn) filterFn(this);
+              });
+            });
+          }
+
+          if (other !== undefined) {
+            const otherArray = other.split(',');
+            queryBuilder.where(function () {
+              otherArray.forEach((otherItem) => {
+                const filterFn = otherFiltersMap[otherItem];
+                if (filterFn) filterFn(this);
+              });
+            });
+          }
+
+          if (search !== undefined) {
+            const searchArray = search.split(',');
+            queryBuilder.where(function () {
+              searchArray.forEach((term) => {
                 this.orWhere('products.title', 'like', `%${term}%`).orWhere(
                   'products.description',
                   'like',
@@ -298,53 +437,139 @@ const getProductsBy = async (params) => {
             });
           }
 
-          // --- Many-to-many filters ---
-          const manyToMany = {
-            tags,
-            features,
-            userTypes,
-            occasions,
-            useCases,
-            industries,
-          };
-          for (const key in manyToMany) {
-            applyManyToManyFilter(
-              qb,
-              manyToMany[key],
-              joinMap[key],
-              tableMap[key],
-              key,
-            );
+          // if (tags !== undefined) {
+          //   const tagsArray = tags.split(',');
+          //   queryBuilder.whereIn('products.id', function () {
+          //     this.select('product_id')
+          //       .from('tagsProducts')
+          //       .whereIn('tag_id', tagsArray);
+          //   });
+          // }
+          if (tags !== undefined) {
+            const tagsArray = tags.split(',');
+            queryBuilder.whereIn('products.id', function () {
+              this.select('tagsProducts.product_id')
+                .from('tagsProducts')
+                .join('tags', 'tagsProducts.tag_id', 'tags.id')
+                .whereIn('tags.slug', tagsArray);
+            });
           }
+
+          if (features !== undefined) {
+            const featuresArray = features.split(',');
+            queryBuilder.whereIn('products.id', function () {
+              this.select('featuresProducts.product_id')
+                .from('featuresProducts')
+                .join('features', 'featuresProducts.feature_id', 'features.id')
+                .whereIn('features.slug', featuresArray);
+            });
+          }
+
+          if (userTypes !== undefined) {
+            const userTypesArray = userTypes.split(',');
+            queryBuilder.whereIn('products.id', function () {
+              this.select('userTypesProducts.product_id')
+                .from('userTypesProducts')
+                .join(
+                  'userTypes',
+                  'userTypesProducts.userType_id',
+                  'userTypes.id',
+                )
+                .whereIn('userTypes.slug', userTypesArray);
+            });
+          }
+
+          if (occasions !== undefined) {
+            const occasionsArray = occasions.split(',');
+            queryBuilder.whereIn('products.id', function () {
+              this.select('occasionsProducts.product_id')
+                .from('occasionsProducts')
+                .join(
+                  'occasions',
+                  'occasionsProducts.occasion_id',
+                  'occasions.id',
+                )
+                .whereIn('occasions.slug', occasionsArray);
+            });
+          }
+
+          if (useCases !== undefined) {
+            const useCasesArray = useCases.split(',');
+            queryBuilder.whereIn('products.id', function () {
+              this.select('useCasesProducts.product_id')
+                .from('useCasesProducts')
+                .join('useCases', 'useCasesProducts.useCase_id', 'useCases.id')
+                .whereIn('useCases.slug', useCasesArray);
+            });
+          }
+
+          if (industries !== undefined) {
+            const industriesArray = industries.split(',');
+            queryBuilder.whereIn('products.id', function () {
+              this.select('industriesProducts.product_id')
+                .from('industriesProducts')
+                .join(
+                  'industries',
+                  'industriesProducts.industry_id',
+                  'industries.id',
+                )
+                .whereIn('industries.slug', industriesArray);
+            });
+          }
+
+          // if (features !== undefined) {
+          //   const featuresArray = features.split(',');
+          //   queryBuilder.whereIn('products.id', function () {
+          //     this.select('product_id')
+          //       .from('featuresProducts')
+          //       .whereIn('feature_id', featuresArray);
+          //   });
+          // }
+          // if (userTypes !== undefined) {
+          //   const userTypesArray = userTypes.split(',');
+          //   queryBuilder.whereIn('products.id', function () {
+          //     this.select('product_id')
+          //       .from('userTypesProducts')
+          //       .whereIn('userType_id', userTypesArray);
+          //   });
+          // }
+          // if (occasions !== undefined) {
+          //   const occasionsArray = occasions.split(',');
+          //   queryBuilder.whereIn('products.id', function () {
+          //     this.select('product_id')
+          //       .from('occasionsProducts')
+          //       .whereIn('occasion_id', occasionsArray);
+          //   });
+          // }
+          // if (useCases !== undefined) {
+          //   const useCasesArray = useCases.split(',');
+          //   queryBuilder.whereIn('products.id', function () {
+          //     this.select('product_id')
+          //       .from('useCasesProducts')
+          //       .whereIn('useCase_id', useCasesArray);
+          //   });
+          // }
+          // if (industries !== undefined) {
+          //   const industriesArray = industries.split(',');
+          //   queryBuilder.whereIn('products.id', function () {
+          //     this.select('product_id')
+          //       .from('industriesProducts')
+          //       .whereIn('industry_id', industriesArray);
+          //   });
+          // }
         });
-    };
-
-    // --- Sorting ---
-    const applySorting = (qb, col, dir) => {
-      if (col === 'highestRated') qb.orderBy('ratingsCount', dir);
-      else if (col === 'mostBookmarked') qb.orderBy('favoritesCount', dir);
-      else qb.orderBy(`products.${col}`, dir);
-    };
-
-    const baseQuery = getModel();
-
-    // --- Data query ---
-    const dataQuery = baseQuery
-      .clone()
-      .modify((qb) => applySorting(qb, column, direction))
+    const lastItem = await getModel()
+      .orderBy(column, lastItemDirection)
+      .limit(1);
+    const data = await getModel()
+      .orderBy(column, direction)
       .offset(page * 10)
       .limit(10);
-
-    // --- Last item for pagination ---
-    const lastQuery = baseQuery
-      .clone()
-      .modify((qb) => applySorting(qb, column, lastItemDirection))
-      .limit(1);
-
-    const data = await dataQuery;
-    const lastItem = await lastQuery;
-
-    return { lastItem: lastItem[0], data };
+    // .select();
+    return {
+      lastItem: lastItem[0],
+      data,
+    };
   } catch (error) {
     return error.message;
   }
@@ -679,11 +904,16 @@ const editProduct = async (token, updatedProductId, body) => {
 };
 
 module.exports = {
+  getProducts,
+  getProductsPagination,
+  getProductsSearch,
+  getProductsByCategories,
   getProductsBy,
-
+  getProductsByCategory,
   getProductById,
   getProductsAll,
   // createProducts,
   editProduct,
   createProductNode,
+  getProductsByTag,
 };
