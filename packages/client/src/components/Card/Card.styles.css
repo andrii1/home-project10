@@ -223,11 +223,11 @@
   }
 
   .card-image {
-    flex: 0 0 40%;
+    flex: 0 0 45%;
   }
 
   .card-body {
-    flex: 0 0 60%;
+    flex: 0 0 55%;
   }
 
   .card-image.list {

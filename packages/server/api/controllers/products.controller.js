@@ -466,7 +466,11 @@ const createProductNode = async (token, body) => {
           role: 'user',
           content: `Write a short, engaging description for product "${
             body.title
-          }"${body.url ? ` with link ${body.url}` : ''}.`,
+          }"${
+            body.url
+              ? `, as a reference use link ${body.url}. Do not include link.`
+              : ''
+          }.`,
         },
       ],
       temperature: 0.7,

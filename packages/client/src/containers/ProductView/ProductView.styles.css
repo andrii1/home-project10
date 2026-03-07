@@ -351,6 +351,13 @@ span.underline:hover {
   text-align: justify;
 }
 
+.container-appview h1 {
+  margin-bottom: 0rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word; /* older browsers */
+  word-break: break-word;
+}
+
 @media only screen and (max-width: 768px) {
   .badges {
     align-items: self-start;
@@ -441,10 +448,6 @@ span.underline:hover {
   .container-appview h1 {
     font-size: 1.75rem;
   }
-}
-
-.container-appview h1 {
-  margin-bottom: 0rem;
 }
 
 @media only screen and (min-width: 769px) {

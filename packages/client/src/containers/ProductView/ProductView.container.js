@@ -430,6 +430,7 @@ export const ProductView = () => {
         urlImage={item.url_image === null ? 'deal' : item.url_image}
         topic={item.categoryTitle}
         productTitle={item.productTitle}
+        relatedItemsCard
       />
     );
   });
@@ -736,7 +737,7 @@ export const ProductView = () => {
                         size="sm"
                       />
                     }
-                    label="Buy Now"
+                    label="Get Now"
                   />
                 </Link>
               )}

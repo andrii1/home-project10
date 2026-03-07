@@ -35,6 +35,7 @@ export const Card = ({
   id,
   className,
   smallCard = true,
+  relatedItemsCard = false,
   listCard = false,
   isFavorite,
   addFavorite,
@@ -109,8 +110,50 @@ export const Card = ({
             <span className="amount">{price}</span>
           </p>
         </div>
+        {!relatedItemsCard && (
+          <div className="topics-bookmark">
+            <div className="container-topic-app">
+              {/* <Link target="_blank" to={`/deals/app/${appId}`}>
+              <Button secondary label={appTitle} size="small" />
+            </Link> */}
+              {!relatedItemsCard && (
+                <Link to={`/apps/categories/${topicId}`}>
+                  <Button secondary label={topic} size="small" />
+                </Link>
+              )}
+            </div>
 
-        <div>
+            {user && isFavorite ? (
+              <button
+                type="button"
+                onClick={deleteBookmark}
+                onKeyDown={deleteBookmark}
+                className="button-bookmark"
+              >
+                <FontAwesomeIcon icon={faHeartSolid} size="lg" />
+              </button>
+            ) : user ? (
+              <button
+                type="button"
+                onClick={addFavorite}
+                onKeyDown={addFavorite}
+                className="button-bookmark"
+              >
+                <FontAwesomeIcon icon={faHeart} size="lg" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={bookmarkOnClick}
+                onKeyDown={addFavorite}
+                className="button-bookmark"
+              >
+                <FontAwesomeIcon icon={faHeart} size="lg" />
+              </button>
+            )}
+          </div>
+        )}
+        {/* <div>
           <Link to={urlAffiliate} target="_blank">
             <Button
               fourth
@@ -122,7 +165,7 @@ export const Card = ({
               label="Buy Now"
             />
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -143,6 +186,7 @@ Card.propTypes = {
   urlImage: PropTypes.string,
   smallCard: PropTypes.bool,
   listCard: PropTypes.bool,
+  relatedItemsCard: PropTypes.bool,
   urlImageIcon: PropTypes.bool,
   className: PropTypes.string,
   isFavorite: PropTypes.func,
@@ -168,6 +212,7 @@ Card.defaultProps = {
   id: null,
   smallCard: false,
   listCard: false,
+  relatedItemsCard: false,
   urlImageIcon: false,
   className: null,
   isFavorite: undefined,
