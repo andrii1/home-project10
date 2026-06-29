@@ -892,21 +892,23 @@ export const ProductView = () => {
               </div>
             )}
           </div> */}
-          <div className="container-description">
-            <div className="container-title">
+          {product.description && (
+            <div className="container-description">
+              {/* <div className="container-title">
               <h2>{product.title}</h2>
-            </div>
-            {product.description && (
+            </div> */}
+
               <p className="product-description main-description">
                 <Markdown>{product.description}</Markdown>
               </p>
-            )}
-            {/* {product.descriptionChatGpt && (
+
+              {/* {product.descriptionChatGpt && (
               <p className="product-description main-description">
                 <Markdown>{product.descriptionChatGpt}</Markdown>
               </p>
             )} */}
-          </div>
+            </div>
+          )}
 
           {/* <div className="container-codes">
             {dealCodes.length > 0 ? (
