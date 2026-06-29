@@ -901,11 +901,11 @@ export const ProductView = () => {
                 <Markdown>{product.description}</Markdown>
               </p>
             )}
-            {product.descriptionChatGpt && (
+            {/* {product.descriptionChatGpt && (
               <p className="product-description main-description">
                 <Markdown>{product.descriptionChatGpt}</Markdown>
               </p>
-            )}
+            )} */}
           </div>
 
           {/* <div className="container-codes">
@@ -1084,10 +1084,10 @@ export const ProductView = () => {
             </div>
           )} */}
           <div className="container-comments">
-            <h2 className="h-no-margin h-no-margin-bottom">Comments</h2>
+            <h2 className="h-no-margin h-no-margin-bottom">Reviews</h2>
             {comments.length === 0 && (
               <div>
-                <i>No comments yet. </i>
+                <i>No reviews yet. </i>
                 {user && <i>Add a first one below.</i>}
               </div>
             )}
@@ -1113,7 +1113,7 @@ export const ProductView = () => {
                   <Link to="/login" className="simple-link">
                     log in
                   </Link>{' '}
-                  to add comments
+                  to add reviews
                 </i>
               </div>
             )}
@@ -1124,7 +1124,7 @@ export const ProductView = () => {
                     <textarea
                       className="form-input textarea-new-comment"
                       value={comment}
-                      placeholder="Your comment..."
+                      placeholder="Your review..."
                       onChange={commentHandler}
                     />
 
@@ -1132,7 +1132,7 @@ export const ProductView = () => {
                       primary
                       className="btn-add-prompt"
                       type="submit"
-                      label="Add comment"
+                      label="Add a review"
                     />
                     {validForm && (
                       <Modal

@@ -247,6 +247,8 @@ form.home {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 @keyframes slide-in {

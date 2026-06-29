@@ -277,13 +277,19 @@ const getProductsBy = async (params) => {
           'products.*',
           'categories.title as categoryTitle',
           'categories.slug as categorySlug',
-          knex.raw(`COUNT(DISTINCT favorites.id) as favoritesCount`),
-          knex.raw(`COUNT(DISTINCT ratings.id) as ratingsCount`),
+          knex.raw(`(
+        SELECT COUNT(*)
+        FROM favorites
+        WHERE favorites.product_id = products.id
+      ) as favoritesCount`),
+
+          knex.raw(`(
+        SELECT COUNT(*)
+        FROM ratings
+        WHERE ratings.product_id = products.id
+      ) as ratingsCount`),
         )
         .leftJoin('categories', 'products.category_id', 'categories.id')
-        .leftJoin('favorites', 'products.id', 'favorites.product_id')
-        .leftJoin('ratings', 'products.id', 'ratings.product_id')
-        .groupBy('products.id', 'categories.title', 'categories.slug')
         .modify((qb) => {
           // --- Simple filters ---
           if (categories) qb.whereIn('categories.slug', categories.split(','));
@@ -424,7 +430,9 @@ const createProductNode = async (token, body) => {
       };
 
     // === Tags ===
-    const promptTags = `Create 3-4 tags for this product: "${body.title}"${
+    const promptTags = `Create 3-5 niche, detailed, long tail tags for this product: "${
+      body.title
+    }"${
       body.url ? ` with link ${body.url}` : ''
     }. Tag should be without hashtag, multiple words allowed, and not contain 'product'. Return tags separated by comma.`;
     const tagsString = (
